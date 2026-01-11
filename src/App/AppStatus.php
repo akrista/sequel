@@ -14,10 +14,8 @@ final class AppStatus
 {
     /**
      * Holds Sequel's database connection.
-     *
-     * @var Connection
      */
-    private $connection;
+    private readonly \Akrista\Sequel\Connection\MySqlConnection|\Akrista\Sequel\Connection\PostgresConnection|\Akrista\Sequel\Connection\SQLiteConnection $connection;
 
     /**
      * AppStatus constructor.

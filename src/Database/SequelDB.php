@@ -17,10 +17,7 @@ final class SequelDB extends Model
 {
     protected Builder $builder;
 
-    /**
-     * @var mixed
-     */
-    private $dbConnection;
+    private \Akrista\Sequel\Connection\MySqlConnection|\Akrista\Sequel\Connection\PostgresConnection|\Akrista\Sequel\Connection\SQLiteConnection|null $dbConnection = null;
 
     /**
      * @param  string  $database  Database name

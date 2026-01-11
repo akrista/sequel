@@ -71,7 +71,7 @@ final class Authorised
         } catch (Exception $exception) {
             $connection = [
                 'connected' => false,
-                'detailed' => 'Could not create a valid database connection: '.$exception->getMessage(),
+                'detailed' => 'Could not create a valid database connection: ' . $exception->getMessage(),
             ];
         }
 

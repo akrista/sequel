@@ -40,12 +40,12 @@ final class PostgresConnection extends Connection
         $database = $database ?: config('sequel.database.database');
 
         $dsn =
-            $connection.
-            ':dbname='.
-            $database.
-            ';host='.
-            $host.
-            ';port='.
+            $connection .
+            ':dbname=' .
+            $database .
+            ';host=' .
+            $host .
+            ';port=' .
             $port;
         $user = config('sequel.database.username');
         $pass = config('sequel.database.password');
@@ -108,15 +108,15 @@ final class PostgresConnection extends Connection
         $columns = [];
         $connection = (new DatabaseConnector)->getConnection($database);
         $temp_columns = $connection->select(
-            "SELECT column_name as field, data_type as type, is_nullable as null, column_default as default FROM information_schema.columns WHERE table_schema='".
-            config('database.connections.pgsql.schema').
-            "' AND table_name='".
-            $table.
+            "SELECT column_name as field, data_type as type, is_nullable as null, column_default as default FROM information_schema.columns WHERE table_schema='" .
+            config('database.connections.pgsql.schema') .
+            "' AND table_name='" .
+            $table .
             "'"
         );
         $index = $connection->select(
-            "SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '".
-            $table.
+            "SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '" .
+            $table .
             "'::regclass AND i.indisprimary;"
         );
 
@@ -142,7 +142,7 @@ final class PostgresConnection extends Connection
     {
         $connection = (new DatabaseConnector)->getConnection($database);
 
-        return $connection->select('SELECT * FROM '.$table);
+        return $connection->select('SELECT * FROM ' . $table);
     }
 
     /**

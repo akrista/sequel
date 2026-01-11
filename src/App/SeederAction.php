@@ -49,10 +49,8 @@ final class SeederAction implements GenerationInterface
 
     /**
      * Get fully qualified class name
-     *
-     * @return mixed
      */
-    public function getQualifiedName()
+    public function getQualifiedName(): string|false
     {
         try {
             return $this->checkAndGetSeederName();

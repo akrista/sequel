@@ -114,7 +114,7 @@ final class ModelAction implements GenerationInterface
             return false;
         }
 
-        $arr = explode('\\', (string) $this->getQualifiedName());
+        $arr = explode('\\', $this->getQualifiedName());
         $count = count($arr);
         $namespace = '';
 

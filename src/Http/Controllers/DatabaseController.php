@@ -49,8 +49,6 @@ final class DatabaseController extends Controller
 
     /**
      * DatabaseActionController's constructor
-     *
-     * @param  Request|SequelDatabaseRequest  $request
      */
     public function __construct(Request|SequelDatabaseRequest $request)
     {

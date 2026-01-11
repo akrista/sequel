@@ -32,10 +32,8 @@ final class DatabaseTraverser
 
     /**
      * Holds custom database connection.
-     *
-     * @var Connection
      */
-    private $connection;
+    private \Akrista\Sequel\Connection\MySqlConnection|\Akrista\Sequel\Connection\PostgresConnection|\Akrista\Sequel\Connection\SQLiteConnection $connection;
 
     /**
      * DatabaseTraverser constructor.
@@ -67,7 +65,7 @@ final class DatabaseTraverser
                     $databaseName->official,
                     config('sequel.ignored')
                 ) &&
-                config('sequel.ignored.'.$databaseName->official)[0] === '*'
+                config('sequel.ignored.' . $databaseName->official)[0] === '*'
             ) {
                 continue;
             }
@@ -82,14 +80,14 @@ final class DatabaseTraverser
                 $collection[$databaseName->pretty]['tables'] as $key => $table
             ) {
                 $tablesToIgnore =
-                    config('sequel.ignored.'.$databaseName->official) ?? [];
+                    config('sequel.ignored.' . $databaseName->official) ?? [];
 
                 if (
                     ! in_array($table['name']['official'], $tablesToIgnore, true)
                 ) {
                     $flatTableCollection[] =
-                        $databaseName->official.
-                        '.'.
+                        $databaseName->official .
+                        '.' .
                         $table['name']['official'];
                 } else {
                     unset($collection[$databaseName->pretty]['tables'][$key]);
@@ -125,9 +123,9 @@ final class DatabaseTraverser
             ['', 'Model\\', 'Models\\', $configNamespace->namespace] as $subNamespace
         ) {
             $model =
-                $rootNamespace.
-                $subNamespace.
-                $modelName.
+                $rootNamespace .
+                $subNamespace .
+                $modelName .
                 $configNamespace->suffix;
 
             if (class_exists($model)) {

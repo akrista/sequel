@@ -47,16 +47,16 @@ final class MySqlConnection extends Connection
 
         if ($socket) {
             $dsn .=
-                ':unix_socket='.$socket;
+                ':unix_socket=' . $socket;
         } else {
             $dsn .=
-                ':host='.
-                $host.
-                ';port='.
+                ':host=' .
+                $host .
+                ';port=' .
                 $port;
         }
 
-        $dsn .= ';dbname='.$database;
+        $dsn .= ';dbname=' . $database;
 
         $user = config('sequel.database.username');
         $pass = config('sequel.database.password');
@@ -117,7 +117,7 @@ final class MySqlConnection extends Connection
      */
     public function formatTableName(string $database, string $table): string
     {
-        return $database.'.'.$table;
+        return $database . '.' . $table;
     }
 
     /**

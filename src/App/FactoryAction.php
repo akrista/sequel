@@ -60,10 +60,8 @@ final class FactoryAction implements GenerationInterface
 
     /**
      * Get fully qualified class name
-     *
-     * @return mixed
      */
-    public function getQualifiedName()
+    public function getQualifiedName(): string|false
     {
         try {
             return $this->checkAndGetFactoryName();

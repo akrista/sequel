@@ -44,11 +44,9 @@ final class SequelAdapter
     }
 
     /**
-     * @return string
-     *
      * @throws Exception
      */
-    public function showDatabases()
+    public function showDatabases(): string
     {
         return match ($this->databaseType) {
             'mysql' => 'SHOW DATABASES;',
@@ -61,11 +59,9 @@ final class SequelAdapter
     }
 
     /**
-     * @return string
-     *
      * @throws Exception
      */
-    public function showTablesFrom(string $databaseName)
+    public function showTablesFrom(string $databaseName): string
     {
         return match ($this->databaseType) {
             'mysql' => 'SHOW TABLES FROM `' . $databaseName . '`;',

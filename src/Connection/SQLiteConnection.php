@@ -40,7 +40,7 @@ final class SQLiteConnection extends Connection
         $database = config('sequel.database.database');
 
         // Handle relative and absolute paths
-        if ($database !== ':memory:' && !str_starts_with($database, '/')) {
+        if ($database !== ':memory:' && !str_starts_with((string) $database, '/')) {
             $database = database_path($database);
         }
 
@@ -55,7 +55,7 @@ final class SQLiteConnection extends Connection
     public function getGrants(): array
     {
         return [
-            'SQLite does not support user grants.'
+            'SQLite does not support user grants.',
         ];
     }
 
