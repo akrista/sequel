@@ -1,36 +1,21 @@
 <?php
 
-namespace Protoqol\Prequel\Database;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Database;
 
 use Illuminate\Support\Facades\DB;
 
-class DatabaseAction
+final class DatabaseAction
 {
     /**
-     * @var string
-     */
-    private $database;
-
-    /**
-     * @var string
-     */
-    private $table;
-
-    /**
      * DatabaseAction constructor.
-     *
-     * @param string $database
-     * @param string $table
      */
-    public function __construct(string $database, string $table)
-    {
-        $this->database = $database;
-        $this->table = $table;
-    }
+    public function __construct(private readonly string $database, private readonly string $table) {}
 
     // @TODO MOVE TO PDB::CLASS FACADE
     public function insertNewRow(array $data)
     {
-        return DB::table($this->database . "." . $this->table)->insert($data);
+        return DB::table($this->database . '.' . $this->table)->insert($data);
     }
 }

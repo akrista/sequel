@@ -4,9 +4,9 @@ require("./bootstrap/bootstrap");
 
 window.Vue = require("vue");
 
-import Prequel from "./components/Pages/Prequel.vue";
+import Sequel from "./components/Pages/Sequel.vue";
 
 new Vue({
-    el: "#prequel",
-    ...Prequel,
+    el: "#sequel",
+    ...Sequel,
 });

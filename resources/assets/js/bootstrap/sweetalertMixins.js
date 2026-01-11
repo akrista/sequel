@@ -1,4 +1,4 @@
-window.PrequelSuccessToast = Swal.mixin({
+window.SequelSuccessToast = Swal.mixin({
     toast            : true,
     position         : "bottom",
     title            : "Success",
@@ -7,7 +7,7 @@ window.PrequelSuccessToast = Swal.mixin({
     timer: 3000,
 });
 
-window.PrequelErrorToast = Swal.mixin({
+window.SequelErrorToast = Swal.mixin({
     toast            : true,
     position         : "bottom",
     title            : "Oops...",

@@ -1,49 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Prequel Master Switch : boolean
+    | Sequel Master Switch : boolean
     |--------------------------------------------------------------------------
     |
-    | Manually disable/enable Prequel, if in production Prequel will always be
+    | Manually disable/enable Sequel, if in production Sequel will always be
     | disabled. Reason being that nobody should ever be able to directly look
     | inside your database besides you or your dev team (obviously).
     |
     */
 
-    'enabled' => env('PREQUEL_ENABLED', true),
-
+    'enabled' => env('SEQUEL_ENABLED', true),
 
     /*
     |--------------------------------------------------------------------------
-    | Prequel Locale : string
+    | Sequel Locale : string
     |--------------------------------------------------------------------------
     |
-    | Choose what language Prequel should display in.
+    | Choose what language Sequel should display in.
     |
     */
 
     'locale' => env('APP_LOCALE', 'en'),
 
-
     /*
     |--------------------------------------------------------------------------
-    | Prequel Path
+    | Sequel Path
     |--------------------------------------------------------------------------
     |
-    | The path where Prequel will be residing. Note that this does not affect
-    | Prequel API routes.
+    | The path where Sequel will be residing. Note that this does not affect
+    | Sequel API routes.
     |
     */
 
-    'path'    => 'prequel',
-
+    'path' => 'sequel',
 
     /*
     |--------------------------------------------------------------------------
-    | Prequel base url
+    | Sequel base url
     |--------------------------------------------------------------------------
     |
     | When present, this URL will be used instead of the default url.
@@ -52,7 +51,6 @@ return [
     |
     */
     'baseUrl' => null,
-
 
     /*
     |--------------------------------------------------------------------------
@@ -80,37 +78,35 @@ return [
     */
 
     'suffixes' => [
-        'model'      => 'Models\\',
-        'seeder'     => 'Seeder',
-        'factory'    => 'Factory',
+        'model' => 'Models\\',
+        'seeder' => 'Seeder',
+        'factory' => 'Factory',
         'controller' => 'Controller',
-        'resource'   => 'Resource',
+        'resource' => 'Resource',
     ],
-
 
     /*
     |--------------------------------------------------------------------------
-    | Prequel Database Configuration : array
+    | Sequel Database Configuration : array
     |--------------------------------------------------------------------------
     |
-    | This enables you to fully configure your database connection for Prequel.
+    | This enables you to fully configure your database connection for Sequel.
     |
     */
 
     'database' => [
         'connection' => env('DB_CONNECTION', 'mysql'),
-        'host'       => env('DB_HOST', '127.0.0.1'),
-        'port'       => env('DB_PORT', '3306'),
-        'database'   => env('DB_DATABASE', 'homestead'),
-        'username'   => env('DB_USERNAME', 'homestead'),
-        'password'   => env('DB_PASSWORD', 'secret'),
-        'socket'     => env('DB_SOCKET', ''),
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'port' => env('DB_PORT', '3306'),
+        'database' => env('DB_DATABASE', 'homestead'),
+        'username' => env('DB_USERNAME', 'homestead'),
+        'password' => env('DB_PASSWORD', 'secret'),
+        'socket' => env('DB_SOCKET', ''),
     ],
-
 
     /*
     |--------------------------------------------------------------------------
-    | Prequel ignored databases and tables : array
+    | Sequel ignored databases and tables : array
     |--------------------------------------------------------------------------
     | Databases and tables that will be ignored during database discovery.
     |
@@ -129,32 +125,30 @@ return [
         // 'mysql'               => ['*'],
     ],
 
-
     /*
     |--------------------------------------------------------------------------
-    | Prequel pagination per page : integer
+    | Sequel pagination per page : integer
     |--------------------------------------------------------------------------
     |
-    | When Prequel retrieves paginated information, this is the number of
+    | When Sequel retrieves paginated information, this is the number of
     | records that will be in each page.
     |
     */
 
     'pagination' => 100,
 
-
     /*
     |--------------------------------------------------------------------------
-    | Prequel middleware : array
+    | Sequel middleware : array
     |--------------------------------------------------------------------------
     |
-    | Define custom middleware for Prequel to use.
+    | Define custom middleware for Sequel to use.
     |
-    | Ex. 'web', Protoqol\Prequel\Http\Middleware\Authorised::class
+    | Ex. 'web', Protoqol\Sequel\Http\Middleware\Authorised::class
     |
     */
 
     'middleware' => [
-        Protoqol\Prequel\Http\Middleware\Authorised::class,
+        Akrista\Sequel\Http\Middleware\Authorised::class,
     ],
 ];

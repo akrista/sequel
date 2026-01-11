@@ -1,4 +1,4 @@
-![Prequel](assets/prequel_v1.png)
+![Sequel](assets/_v1.png)
 
 # Contributor Covenant Code of Conduct
 

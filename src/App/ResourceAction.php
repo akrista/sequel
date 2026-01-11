@@ -1,96 +1,53 @@
 <?php
 
-namespace Protoqol\Prequel\App;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\App;
+
+use Akrista\Sequel\Interfaces\GenerationInterface;
+use Akrista\Sequel\Traits\classResolver;
 use Exception;
 use Illuminate\Support\Facades\Artisan;
-use Protoqol\Prequel\Interfaces\GenerationInterface;
-use Protoqol\Prequel\Traits\classResolver;
 
-class ResourceAction implements GenerationInterface
+final class ResourceAction implements GenerationInterface
 {
     use classResolver;
 
     /**
-     * @var string $database
-     */
-    private $database;
-
-    /**
-     * @var string $table
-     */
-    private $table;
-
-    /**
      * ControllerAction constructor.
-     *
-     * @param string $database
-     * @param string $table
      */
-    public function __construct(string $database, string $table)
-    {
-        $this->database = $database;
-        $this->table = $table;
-    }
+    public function __construct(private string $database, private string $table) {}
 
     /**
      * Generate resource
-     *
-     * @return mixed
      */
-    public function generate()
+    public function generate(): string
     {
-        Artisan::call("make:resource", [
-            "name" => $this->generateResourceName($this->table),
+        Artisan::call('make:resource', [
+            'name' => $this->generateResourceName($this->table),
         ]);
 
         $this->dumpAutoload();
 
-        return (string)$this->getQualifiedName();
-    }
-
-    /**
-     * Resolve and check resource for table.
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function checkAndGetResourceName()
-    {
-        $resourceClass =
-            "App\\Http\\Resources\\" .
-            $this->generateResourceName($this->table);
-
-        if (!$this->classExists($resourceClass)) {
-            throw new Exception(
-                $resourceClass .
-                " could not be found or your resource does not follow naming convention"
-            );
-        }
-
-        return $resourceClass;
+        return (string) $this->getQualifiedName();
     }
 
     /**
      * Get fully qualified class name
-     *
-     * @return mixed
      */
-    public function getQualifiedName()
+    public function getQualifiedName(): string|false
     {
         try {
             return $this->checkAndGetResourceName();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
 
     /**
      * Get class name
-     *
-     * @return mixed
      */
-    public function getClassname()
+    public function getClassname(): false|string
     {
         $class = $this->getQualifiedName();
 
@@ -98,7 +55,7 @@ class ResourceAction implements GenerationInterface
             return false;
         }
 
-        $arr = explode("\\", $class);
+        $arr = explode('\\', $class);
         $count = count($arr);
 
         return $arr[$count - 1];
@@ -106,10 +63,8 @@ class ResourceAction implements GenerationInterface
 
     /**
      * Get class namespace
-     *
-     * @return mixed
      */
-    public function getNamespace()
+    public function getNamespace(): false|string
     {
         $class = $this->getQualifiedName();
 
@@ -117,17 +72,39 @@ class ResourceAction implements GenerationInterface
             return false;
         }
 
-        $arr = explode("\\", $class);
+        $arr = explode('\\', $class);
         $count = count($arr);
-        $namespace = "";
+        $namespace = '';
 
         for ($i = 0; $i < $count; $i++) {
             if ($i === $count - 1) {
                 break;
             }
-            $namespace .= (string)$arr[$i] . "\\";
+
+            $namespace .= $arr[$i] . '\\';
         }
 
         return $namespace;
+    }
+
+    /**
+     * Resolve and check resource for table.
+     *
+     * @throws Exception
+     */
+    private function checkAndGetResourceName(): string
+    {
+        $resourceClass =
+            'App\\Http\\Resources\\' .
+            $this->generateResourceName($this->table);
+
+        if (!$this->classExists($resourceClass)) {
+            throw new Exception(
+                $resourceClass .
+                ' could not be found or your resource does not follow naming convention'
+            );
+        }
+
+        return $resourceClass;
     }
 }

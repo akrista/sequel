@@ -4,15 +4,15 @@
      */
     declare(strict_types=1);
     
-    namespace Protoqol\Prequel\Tests;
+    namespace Protoqol\Sequel\Tests;
     
     use Orchestra\Testbench\TestCase as OrchestraTestCase;
-    use Protoqol\Prequel\PrequelServiceProvider;
+    use Protoqol\Sequel\SequelServiceProvider;
     
     /**
      * Class TestCase
      *
-     * @package Protoqol\Prequel\Tests
+     * @package Protoqol\Sequel\Tests
      */
     abstract class TestCase extends OrchestraTestCase
     {
@@ -24,6 +24,6 @@
          * @return array
          */
         protected function getPackageProviders($app) : array {
-            return [PrequelServiceProvider::class];
+            return [SequelServiceProvider::class];
         }
     }

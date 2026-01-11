@@ -1,6 +1,8 @@
 <?php
 
-namespace Protoqol\Prequel\Traits;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Traits;
 
 use Illuminate\Support\Str;
 
@@ -8,28 +10,21 @@ trait classResolver
 {
     /**
      * Dump composer's autoload.
-     *
-     * @return int
      */
-    public function dumpAutoload()
+    public function dumpAutoload(): int
     {
         $out = [];
         $return = 0;
 
-        exec("cd " . base_path() . " && composer dump-autoload", $out, $return);
+        exec('cd ' . base_path() . ' && composer dump-autoload', $out, $return);
 
         return $return;
     }
 
     /**
      * Check for class existence.
-     *
-     * @param string $classname
-     * @param array $namespaces
-     *
-     * @return bool|string
      */
-    public function classExists(string $classname, array $namespaces = null)
+    public function classExists(string $classname, ?array $namespaces = null): bool|string
     {
         if (!$namespaces) {
             return class_exists($classname);
@@ -49,29 +44,27 @@ trait classResolver
      * Resolve and return configured suffixes from the config.
      * Returns object with suffix and namespace or an empty string.
      *
-     * @param string $generator ex. 'model', 'controller', 'resource' etc.
-     *
+     * @param  string  $generator  ex. 'model', 'controller', 'resource' etc.
      * @return object
      */
     public function configNamespaceResolver(string $generator)
     {
-        $config = config("prequel.suffixes")[$generator];
-        $exploded = explode("\\", $config);
+        $config = config('sequel.suffixes')[$generator];
+        $exploded = explode('\\', (string) $config);
         $suffix = end($exploded);
         $namespace = $suffix
-            ? substr($config, 0, 0 - strlen($suffix))
+            ? mb_substr((string) $config, 0, -mb_strlen($suffix))
             : $config;
 
-        return (object)[
-            "suffix"    => $suffix,
-            "namespace" => $namespace,
+        return (object) [
+            'suffix' => $suffix,
+            'namespace' => $namespace,
         ];
     }
 
     /**
      * Transform table name to a SingularStudlyClassName.
      *
-     * @param string $classname
      *
      * @return string
      */
@@ -80,42 +73,27 @@ trait classResolver
         return Str::studly(Str::singular($classname));
     }
 
-    /**
-     * @param $classname
-     *
-     * @return string
-     */
-    public function generateControllerName(string $classname)
+    public function generateControllerName(string $classname): string
     {
-        $config = $this->configNamespaceResolver("controller");
+        $config = $this->configNamespaceResolver('controller');
 
         return $config->namespace .
             $this->generateClassName($classname) .
             $config->suffix;
     }
 
-    /**
-     * @param $classname
-     *
-     * @return string
-     */
-    public function generateFactoryName(string $classname)
+    public function generateFactoryName(string $classname): string
     {
-        $config = $this->configNamespaceResolver("factory");
+        $config = $this->configNamespaceResolver('factory');
 
         return $config->namespace .
             $this->generateClassName($classname) .
             $config->suffix;
     }
 
-    /**
-     * @param $classname
-     *
-     * @return string
-     */
-    public function generateModelName(string $classname)
+    public function generateModelName(string $classname): string
     {
-        $config = $this->configNamespaceResolver("model");
+        $config = $this->configNamespaceResolver('model');
 
         return app()->getNamespace() .
             $config->namespace .
@@ -123,28 +101,18 @@ trait classResolver
             $config->suffix;
     }
 
-    /**
-     * @param $classname
-     *
-     * @return string
-     */
-    public function generateResourceName(string $classname)
+    public function generateResourceName(string $classname): string
     {
-        $config = $this->configNamespaceResolver("resource");
+        $config = $this->configNamespaceResolver('resource');
 
         return $config->namespace .
             $this->generateClassName($classname) .
             $config->suffix;
     }
 
-    /**
-     * @param $classname
-     *
-     * @return string
-     */
-    public function generateSeederName(string $classname)
+    public function generateSeederName(string $classname): string
     {
-        $config = $this->configNamespaceResolver("seeder");
+        $config = $this->configNamespaceResolver('seeder');
 
         return $config->namespace .
             $this->generateClassName($classname) .

@@ -1,103 +1,81 @@
 <?php
 
-namespace Protoqol\Prequel\Database;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Database;
 
 use Exception;
 
 /**
  * Get queries based on chosen SQL driver.
  * Class SequelAdapter
- *
- * @package Protoqol\LaravelSequel\Classes\Database
  */
-class SequelAdapter
+final class SequelAdapter
 {
     /**
      * Holds database type e.g. 'mysql', 'pgsql', 'sqlite' etc.
-     *
-     * @var string $databaseType
      */
-    private $databaseType;
+    private readonly string $databaseType;
 
-    /**
-     * SequelAdapter constructor.
-     *
-     * @param string $databaseType
-     */
-    public function __construct(string $databaseType)
+    public function __construct(string $connectionName)
     {
         $this->databaseType = config(
-            "database.connections.{$databaseType}.driver"
+            sprintf('database.connections.%s.driver', $connectionName)
         );
     }
 
     /**
      * Get all tables
      *
-     * @return string
      * @throws Exception
      */
-    public function showTables()
+    public function showTables(): string
     {
-        switch ($this->databaseType) {
-            case "mysql":
-                return "SHOW TABLES;";
-            case "pgsql":
-                return 'SELECT table_name FROM information_schema.tables WHERE table_schema=\'' .
-                    config("database.connections.pgsql.schema") .
-                    '\' ORDER BY table_name;';
-            case "sqlite":
-                return 'SELECT name FROM sqlite_master WHERE type="table";';
-            //            case 'sqlsrv':
-            //                return 'SELECT * FROM INFORMATION_SCHEMA.TABLES; GO';
-            default:
-                throw new Exception(
-                    "Selected invalid or unsupported database driver"
-                );
-        }
+        return match ($this->databaseType) {
+            'mysql' => 'SHOW TABLES;',
+            'pgsql' => "SELECT table_name FROM information_schema.tables WHERE table_schema='" .
+                config('database.connections.pgsql.schema') .
+                "' ORDER BY table_name;",
+            'sqlite' => 'SELECT name FROM sqlite_master WHERE type="table";',
+            default => throw new Exception(
+                'Selected invalid or unsupported database driver'
+            ),
+        };
     }
 
     /**
      * @return string
+     *
      * @throws Exception
      */
     public function showDatabases()
     {
-        switch ($this->databaseType) {
-            case "mysql":
-                return "SHOW DATABASES;";
-            case "pgsql":
-                return "SELECT datname FROM pg_database WHERE datistemplate = false;";
-            case "sqlite":
-                return config("database.connections.sqlte.database");
-            default:
-                throw new Exception(
-                    "Selected invalid or unsupported database driver"
-                );
-        }
+        return match ($this->databaseType) {
+            'mysql' => 'SHOW DATABASES;',
+            'pgsql' => 'SELECT datname FROM pg_database WHERE datistemplate = false;',
+            'sqlite' => 'SELECT "main" as database;',
+            default => throw new Exception(
+                'Selected invalid or unsupported database driver'
+            ),
+        };
     }
 
     /**
-     * @param string $databaseName
-     *
      * @return string
+     *
      * @throws Exception
      */
     public function showTablesFrom(string $databaseName)
     {
-        switch ($this->databaseType) {
-            case "mysql":
-                return "SHOW TABLES FROM `" . $databaseName . "`;";
-            case "pgsql":
-                return 'SELECT table_name FROM information_schema.tables WHERE table_schema=\'' .
-                    config("database.connections.pgsql.schema") .
-                    '\' ORDER BY table_name;';
-            case "sqlite":
-                return config("database.connections.sqlte.database");
-            default:
-                throw new Exception(
-                    "Selected invalid or unsupported database driver"
-                );
-        }
+        return match ($this->databaseType) {
+            'mysql' => 'SHOW TABLES FROM `' . $databaseName . '`;',
+            'pgsql' => "SELECT table_name FROM information_schema.tables WHERE table_schema='" .
+                config('database.connections.pgsql.schema') .
+                "' ORDER BY table_name;",
+            'sqlite' => 'SELECT name FROM sqlite_master WHERE type="table";',
+            default => throw new Exception(
+                'Selected invalid or unsupported database driver'
+            ),
+        };
     }
 }

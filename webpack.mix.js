@@ -13,12 +13,12 @@ require('laravel-mix-tailwind');
  |
  */
 
-mix.setResourceRoot('packages/protoqol/prequel')
+mix.setResourceRoot('packages/protoqol/sequel')
     .postCss('resources/assets/css/app.css', 'public')
     .purgeCss()
     .tailwind()
     .js('resources/assets/js/app.js', 'public')
     .vue({ version: 2 })
-    .copy('public', '../Prequel/public/vendor/prequel')
-    .copy('resources/lang', '../Prequel/resources/lang/vendor/prequel');
+    .copy('public', '../Sequel/public/vendor/sequel')
+    .copy('resources/lang', '../Sequel/resources/lang/vendor/sequel');
 

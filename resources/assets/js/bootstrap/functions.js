@@ -39,7 +39,7 @@ window.prettifyName = function (str) {
  * @returns {*}
  */
 Vue.prototype.trans = (string, args) => {
-    let value = _.get(window.Prequel.i18n, string);
+    let value = _.get(window.Sequel.i18n, string);
 
     _.eachRight(args, (paramVal, paramKey) => {
         value = _.replace(value, `:${paramKey}`, paramVal);

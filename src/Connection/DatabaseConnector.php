@@ -1,42 +1,31 @@
 <?php
 
-namespace Protoqol\Prequel\Connection;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Connection;
 
 /**
  * Class DatabaseConnector
- *
- * @package Protoqol\Prequel\Database
  */
-class DatabaseConnector
+final class DatabaseConnector
 {
     public $connection;
 
     /**
-     * @param null $database Database name
-     *
-     * @return mixed
+     * @param  ?string  $database  Database name
      */
-    public function getConnection($database = null)
+    public function getConnection(?string $database = null): MySqlConnection|PostgresConnection|SQLiteConnection
     {
-        switch (config("prequel.database.connection")) {
-            case "mysql":
-                $className = "MySqlConnection";
-                break;
-            case "pgsql":
-                $className = "PostgresConnection";
-                break;
-            default:
-                $className = "MySqlConnection";
-                break;
-        }
+        $className = match (config('sequel.database.connection')) {
+            'mysql' => 'MySqlConnection',
+            'pgsql' => 'PostgresConnection',
+            'sqlite' => 'SQLiteConnection',
+            default => 'MySqlConnection',
+        };
 
-        $class = "Protoqol\\Prequel\\Connection\\" . $className;
+        $class = 'Akrista\Sequel\Connection\\' . $className;
 
-        if ($database) {
-            $this->connection = (new $class())->getConnection($database);
-        } else {
-            $this->connection = (new $class())->getConnection();
-        }
+        $this->connection = $database ? (new $class())->getConnection($database) : (new $class())->getConnection();
 
         return $this->connection;
     }

@@ -1,14 +1,13 @@
 <?php
 
-namespace Protoqol\Prequel\Interfaces;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Interfaces;
 
 interface GenerationInterface
 {
     /**
      * GenerationInterface constructor.
-     *
-     * @param string $database
-     * @param string $table
      */
     public function __construct(string $database, string $table);
 

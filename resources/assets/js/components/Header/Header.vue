@@ -1,7 +1,7 @@
 <template>
     <div class="header-container">
         <div class="header-flexbox">
-            <PrequelLogo class="header-left" :env="env"/>
+            <SequelLogo class="header-left" :env="env"/>
 
             <TableFilter v-if="!error.error" class="header-middle"
                          :activeTable="activeTable"
@@ -26,13 +26,13 @@
 
 <script>
 
-import PrequelLogo    from "./HeaderSections/PrequelLogo";
+import SequelLogo    from "./HeaderSections/SequelLogo";
 import TableFilter    from "./HeaderSections/TableFilter";
 import SettingButtons from "./HeaderSections/SettingButtons";
 
 export default {
     name      : "Header",
-    components: { SettingButtons, TableFilter, PrequelLogo },
+    components: { SettingButtons, TableFilter, SequelLogo },
     props     : [
         "error",
         "activeTable",

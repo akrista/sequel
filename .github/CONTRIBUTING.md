@@ -1,4 +1,4 @@
-![Prequel](assets/prequel_v1.png)
+![Sequel](assets/_v1.png)
 
 ## Contribution guidelines
 
@@ -15,20 +15,20 @@
 ## Setup - this will be improved soon.
 
 1. Create or use an existing Laravel project, as long as it has a valid database connection.
-2. Forking Prequel
-   - Run `composer require protoqol/prequel` and use `vendors/protoqol/prequel` as your workspace.
-   - Run `git clone git@github.com:Protoqol/Prequel.git packages/prequel/` and add `"Protoqol\\Prequel\\": "packages/prequel/src/"` to
+2. Forking Sequel
+   - Run `composer require protoqol/` and use `vendors/protoqol/` as your workspace.
+   - Run `git clone git@github.com:Protoqol/Sequel.git packages//` and add `"Protoqol\\Sequel\\": "packages//src/"` to
      your composer.json so it looks like this
    ```json
    "autoload": {
      "psr-4": {
        "App\\": "app/",
-       "Protoqol\\Prequel\\": "packages/prequel/src/"
+       "Protoqol\\Sequel\\": "packages//src/"
      },
    }
    ```
-3. In your Laravel test project run `php artisan vendor:publish --tag=config --provider=Protoqol\Prequel\PrequelServiceProvider` to publish the assets.
-4. Navigate to Prequel's root folder.
+3. In your Laravel test project run `php artisan vendor:publish --tag=config --provider=Protoqol\Sequel\SequelServiceProvider` to publish the assets.
+4. Navigate to Sequel's root folder.
 5. Create a new branch with a descriptive name, no master branch!
 6. When making changes to the front-end (.vue files), run `$ npm run watch` to create a hot-reloading server where you can see your changes live.
 7. When done with your feature/fix and you have made changes to any .vue file, run `$ npm run prod` to create a final build.

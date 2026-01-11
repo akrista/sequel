@@ -1,62 +1,57 @@
 <?php
 
-namespace Protoqol\Prequel\Database;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\Database;
+
+use Akrista\Sequel\Connection\DatabaseConnector;
+use Akrista\Sequel\Traits\classResolver;
 use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Protoqol\Prequel\Connection\DatabaseConnector;
-use Protoqol\Prequel\Traits\classResolver;
 
 /**
  * Class DatabaseTraverser
- *
- * @package Protoqol\Prequel\Database
  */
-class DatabaseTraverser
+final class DatabaseTraverser
 {
     use classResolver;
 
     /**
      * Type of database e.g. mysql, postgres, sqlite or sql server
      *
-     * @var string $databaseConn
+     * @var string
      */
     private $databaseConn;
 
     /**
      * Query collection based on $DB_CONN
-     *
-     * @var SequelAdapter $databaseQueries
      */
-    private $databaseQueries;
+    private SequelAdapter $databaseQueries;
 
     /**
      * Holds custom database connection.
      *
-     * @var Connection $connection
+     * @var Connection
      */
     private $connection;
 
     /**
      * DatabaseTraverser constructor.
-     *
-     * @param string|null $databaseType
      */
     public function __construct(?string $databaseType = null)
     {
         $this->databaseConn =
-            $databaseType ?: config("prequel.database.connection");
+            $databaseType ?: config('sequel.database.connection');
         $this->databaseQueries = new SequelAdapter($this->databaseConn);
-        $this->connection = (new DatabaseConnector())->getConnection();
+        $this->connection = (new DatabaseConnector)->getConnection();
     }
 
     /**
      * Build array of all databases and their respective tables and
      * sort alphabetically.
      *
-     * @return array
      * @throws Exception
      */
     public function getAll(): array
@@ -65,40 +60,39 @@ class DatabaseTraverser
         $flatTableCollection = [];
 
         foreach ($this->getAllDatabases() as $value) {
-            $databaseName = (object)$value["name"];
+            $databaseName = (object) $value['name'];
 
             if (
                 array_key_exists(
                     $databaseName->official,
-                    config("prequel.ignored")
+                    config('sequel.ignored')
                 ) &&
-                config("prequel.ignored." . $databaseName->official)[0] === "*"
+                config('sequel.ignored.'.$databaseName->official)[0] === '*'
             ) {
                 continue;
             }
 
             $collection[$databaseName->pretty] = [
-                "official_name" => $databaseName->official,
-                "pretty_name"   => $databaseName->pretty,
-                "tables"        => $this->getTablesFromDB($databaseName->official),
+                'official_name' => $databaseName->official,
+                'pretty_name' => $databaseName->pretty,
+                'tables' => $this->getTablesFromDB($databaseName->official),
             ];
 
             foreach (
-                $collection[$databaseName->pretty]["tables"]
-                as $key => $table
+                $collection[$databaseName->pretty]['tables'] as $key => $table
             ) {
                 $tablesToIgnore =
-                    config("prequel.ignored." . $databaseName->official) ?? [];
+                    config('sequel.ignored.'.$databaseName->official) ?? [];
 
                 if (
-                !in_array($table["name"]["official"], $tablesToIgnore, true)
+                    ! in_array($table['name']['official'], $tablesToIgnore, true)
                 ) {
                     $flatTableCollection[] =
-                        $databaseName->official .
-                        "." .
-                        $table["name"]["official"];
+                        $databaseName->official.
+                        '.'.
+                        $table['name']['official'];
                 } else {
-                    unset($collection[$databaseName->pretty]["tables"][$key]);
+                    unset($collection[$databaseName->pretty]['tables'][$key]);
                 }
             }
         }
@@ -106,42 +100,40 @@ class DatabaseTraverser
         ksort($collection);
 
         return [
-            "collection"          => $collection,
-            "flatTableCollection" => $flatTableCollection,
+            'collection' => $collection,
+            'flatTableCollection' => $flatTableCollection,
         ];
     }
 
     /**
      * Tries to find matching model for the given table.
      *
-     * @param string|null $tableName
      *
      * @return array|bool Array acts as a tuple containing the actual model and its namespace.
      */
-    public function getModel(?string $tableName)
+    public function getModel(?string $tableName): false|array
     {
-        if (!$tableName) {
+        if (! $tableName) {
             return false;
         }
 
         $rootNamespace = app()->getNamespace();
-        $configNamespace = $this->configNamespaceResolver("model");
+        $configNamespace = $this->configNamespaceResolver('model');
         $modelName = Str::studly(Str::singular($tableName));
 
         foreach (
-            ["", "Model\\", "Models\\", $configNamespace->namespace]
-            as $subNamespace
+            ['', 'Model\\', 'Models\\', $configNamespace->namespace] as $subNamespace
         ) {
             $model =
-                $rootNamespace .
-                $subNamespace .
-                $modelName .
+                $rootNamespace.
+                $subNamespace.
+                $modelName.
                 $configNamespace->suffix;
 
             if (class_exists($model)) {
                 return [
-                    "model"     => new $model(),
-                    "namespace" => $model,
+                    'model' => new $model,
+                    'namespace' => $model,
                 ];
             }
         }
@@ -152,47 +144,43 @@ class DatabaseTraverser
     /**
      * Get information about a specific column
      *
-     * @param string $database Database name
-     * @param string $table Table name
-     * @param array $column Column name
-     *
-     * @return array
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
+     * @param  array  $column  Column name
      */
     public function getColumnData(
         string $database,
         string $table,
         array $column
-    ): array
-    {
+    ): array {
         $select = [
-            "TABLE_SCHEMA",
-            "TABLE_NAME",
-            "COLUMN_NAME",
-            "COLUMN_DEFAULT",
-            "IS_NULLABLE",
-            "COLUMN_COMMENT",
+            'TABLE_SCHEMA',
+            'TABLE_NAME',
+            'COLUMN_NAME',
+            'COLUMN_DEFAULT',
+            'IS_NULLABLE',
+            'COLUMN_COMMENT',
         ];
 
         $result = $this->connection
-            ->table("information_schema.COLUMNS")
+            ->table('information_schema.COLUMNS')
             ->select($select)
             ->where([
-                ["TABLE_SCHEMA", "=", $database],
-                ["TABLE_NAME", "=", $table],
-                ["COLUMN_NAME", "=", $column],
+                ['TABLE_SCHEMA', '=', $database],
+                ['TABLE_NAME', '=', $table],
+                ['COLUMN_NAME', '=', $column],
             ])
             ->get()
             ->toArray();
 
-        return Arr::flatten((array)$result);
+        return Arr::flatten((array) $result);
     }
 
     /**
      * Get table structure
      *
-     * @param string $database Database name
-     * @param string $table Table name
-     *
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
      * @return array*
      */
     public function getTableStructure(string $database, string $table): array
@@ -201,9 +189,8 @@ class DatabaseTraverser
     }
 
     /**
-     * @param string $database Database name
-     * @param string $table Table name
-     *
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
      * @return array*
      */
     public function getTableData(string $database, string $table): array
@@ -214,9 +201,8 @@ class DatabaseTraverser
     /**
      * Get all tables from database
      *
-     * @param string $database Database name
+     * @param  string  $database  Database name
      *
-     * @return array
      * @throws Exception
      */
     public function getTablesFromDB(string $database): array
@@ -227,7 +213,6 @@ class DatabaseTraverser
     /**
      * Get all tables from "main" database (DB_DATABASE in .env)
      *
-     * @return array
      * @throws Exception
      */
     public function getAllTables(): array
@@ -242,7 +227,6 @@ class DatabaseTraverser
     /**
      * Get all databases
      *
-     * @return array
      * @throws Exception
      */
     public function getAllDatabases(): array
@@ -264,9 +248,7 @@ class DatabaseTraverser
      *       'String': Mixed (single value)
      *  -----------------
      *
-     * @param array $arr Query results
-     *
-     * @return array
+     * @param  array  $arr  Query results
      */
     public function normalise(array $arr): array
     {
@@ -274,15 +256,19 @@ class DatabaseTraverser
 
         for ($i = 0, $max = count($arr); $i < $max; $i++) {
             foreach ($arr[$i] as $value) {
-                if (!$value || !is_string($value)) {
+                if (! $value) {
                     continue;
                 }
 
-                $arrayValue = Arr::first((array)$value);
+                if (! is_string($value)) {
+                    continue;
+                }
 
-                $normalised[$i]["name"] = [
-                    "official" => $arrayValue,
-                    "pretty"   => $this->prettifyName($arrayValue),
+                $arrayValue = Arr::first((array) $value);
+
+                $normalised[$i]['name'] = [
+                    'official' => $arrayValue,
+                    'pretty' => $this->prettifyName($arrayValue),
                 ];
             }
         }
@@ -292,21 +278,18 @@ class DatabaseTraverser
 
     /**
      * Prettify names, meaning: remove special characters; capitalise each word.
-     *
-     * @param string $name
-     *
-     * @return string
      */
     public function prettifyName(string $name): string
     {
         $words = preg_split('/[!@#$%^&*(),.?":{}|<>_-]/', $name);
-        $prettyName = "";
+        $prettyName = '';
 
         foreach ($words as $iterator => $iteratorValue) {
-            $prettyName .= ucfirst(strtolower($iteratorValue));
+            $prettyName .= ucfirst(mb_strtolower($iteratorValue));
 
             if ($iterator !== count($words) - 1) {
-                $prettyName .= " ";
+                $prettyName .= ' ';
+
                 continue;
             }
         }

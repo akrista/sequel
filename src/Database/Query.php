@@ -1,19 +1,19 @@
 <?php
 
-namespace Protoqol\Prequel\Database;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\Database;
+
+use Akrista\Sequel\Facades\PDB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Protoqol\Prequel\Facades\PDB;
 
 /**
  * Class Query
- *
- * @package Protoqol\Prequel\Database
  */
-class Query
+final class Query
 {
     /**
      * @var mixed
@@ -25,47 +25,40 @@ class Query
      */
     private $table;
 
-    /**
-     * @var array
-     */
-    private $queries;
+    private readonly array $queries;
 
     /**
      * Query constructor.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
         $this->database = $request->database;
         $this->table = $request->table;
-        $this->queries = $this->collector($request->all("query"));
+        $this->queries = $this->collector($request->all('query'));
     }
 
     /**
      * General purpose query runner with all information packed in response
-     *
-     * @return array
      */
-    public function get()
+    public function get(): array
     {
         $arr = [];
 
         $iteration = 0;
         foreach ($this->queries as $query) {
-            $query = trim($query);
+            $query = mb_trim((string) $query);
             $type = $this->getType($query);
             $results =
-                $type === "dql"
+                $type === 'dql'
                     ? Arr::collapse($this->run($query))
                     : [[$this->run($query)]];
-            $rows = $this->getRows($results, $type === "dql");
+            $rows = $this->getRows($results, $type === 'dql');
 
             $arr[$iteration] = [
-                "query"   => $query,
-                "columns" => $rows,
-                "data"    => $type === "dql" ? $results : $results[0],
-                "type"    => $type,
+                'query' => $query,
+                'columns' => $rows,
+                'data' => $type === 'dql' ? $results : $results[0],
+                'type' => $type,
             ];
 
             $iteration++;
@@ -77,7 +70,6 @@ class Query
     /**
      * Run query
      *
-     * @param $query
      *
      * @return mixed
      */
@@ -96,17 +88,13 @@ class Query
 
     /**
      * Collect array with all queries
-     *
-     * @param array $queryString
-     *
-     * @return array
      */
-    private function collector(array $queryString)
+    private function collector(array $queryString): array
     {
-        $queries = explode(";", $queryString["query"]);
+        $queries = explode(';', (string) $queryString['query']);
 
         foreach ($queries as $key => $query) {
-            if (!$query || empty($query) || $query === "") {
+            if (!$query || ($query === '' || $query === '0') || $query === '') {
                 unset($queries[$key]);
             }
         }
@@ -116,79 +104,56 @@ class Query
 
     /**
      * Get simple query type
-     *
-     * @param string $query
-     *
-     * @return bool|string
      */
-    private function getType(string $query)
+    private function getType(string $query): string|false
     {
-        $str = strtolower($query);
-        $types = (object)[
-            "ddl" => ["create", "alter", "rename", "drop", "truncate"],
-            "dml" => ["insert", "delete", "update", "lock", "merge"],
-            "dcl" => ["grant", "revoke"],
-            "dql" => ["select"],
+        $str = mb_strtolower($query);
+        $types = (object) [
+            'ddl' => ['create', 'alter', 'rename', 'drop', 'truncate'],
+            'dml' => ['insert', 'delete', 'update', 'lock', 'merge'],
+            'dcl' => ['grant', 'revoke'],
+            'dql' => ['select'],
         ];
 
-        switch ($str) {
-            case Str::contains($str, $types->ddl):
-                return "ddl";
-            case Str::contains($str, $types->dml):
-                return "dml";
-            case Str::contains($str, $types->dcl):
-                return "dcl";
-            case Str::contains($str, $types->dql):
-                return "dql";
-            default:
-                return false;
-        }
+        return match ($str) {
+            Str::contains($str, $types->ddl) => 'ddl',
+            Str::contains($str, $types->dml) => 'dml',
+            Str::contains($str, $types->dcl) => 'dcl',
+            Str::contains($str, $types->dql) => 'dql',
+            default => false,
+        };
     }
 
     /**
      * Get key names of results
      *
-     * @param array $results
-     * @param bool $select
      *
      * @return array|bool
      */
-    private function getRows(array $results, bool $select = true)
+    private function getRows(array $results, bool $select = true): array
     {
         $keys = [];
 
         if (!$select) {
             $keys[] = [
-                "Key"   => "Rows affected",
-                "Field" => "Rows affected",
-                "Type"  => "...",
+                'Key' => 'Rows affected',
+                'Field' => 'Rows affected',
+                'Type' => '...',
             ];
         }
 
-        if ($select && $results && !empty($results)) {
-            $sample = (array)$results[0];
+        if ($select && $results && $results !== []) {
+            $sample = (array) $results[0];
 
-            foreach ($sample as $key => $value) {
+            foreach (array_keys($sample) as $key) {
                 $keys[] = [
-                    "Key"   => $key,
-                    "Field" => $key,
-                    "Type"  => $key,
+                    'Key' => $key,
+                    'Field' => $key,
+                    'Type' => $key,
                 ];
             }
         }
 
         return $keys;
-    }
-
-    /**
-     * Check if valid SQL @TODO
-     *
-     * @param string $query
-     *
-     * @return bool
-     */
-    private function isValid(string $query)
-    {
-        return true;
     }
 }

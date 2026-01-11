@@ -1,6 +1,6 @@
 <template>
     <!--    @TODO Better error resolving/suggestions -->
-    <div class="prequel-error">
+    <div class="sequel-error">
         <h1>
             <font-awesome-icon icon="exclamation-triangle"></font-awesome-icon>
             {{ trans('error_page.oops') }}
@@ -35,7 +35,7 @@
 
 <script>
 export default {
-    name   : "PrequelError",
+    name   : "SequelError",
     props  : ["errorDetailed", "env"],
     data() {
         return {
@@ -43,8 +43,8 @@ export default {
                 port                    : 3306,
                 supportedConnectionTypes: ["mysql", "pgsql"],
             },
-            prequel: {
-                lang: window.Prequel.i18n
+            sequel: {
+                lang: window.Sequel.i18n
             }
         };
     },
@@ -75,7 +75,7 @@ export default {
             }
 
             if (suggestionCollection.length === 0) {
-                suggestionCollection.push("Prequel could not suggest any fixes.");
+                suggestionCollection.push("Sequel could not suggest any fixes.");
             }
 
             return suggestionCollection;
@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style lang="scss">
-    .prequel-error {
+    .sequel-error {
         h1 {
             @apply my-2;
             @apply text-5xl;

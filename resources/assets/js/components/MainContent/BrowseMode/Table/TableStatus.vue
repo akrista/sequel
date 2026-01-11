@@ -1,7 +1,7 @@
 <template>
     <div class="table-status-wrapper">
         <div v-if="loading && !tableLoadError" class="table-status-loading">
-            <img width="20" height="20" :alt="trans('table_status.loading_data')" :src="$root.prequel.asset.loader"/>
+            <img width="20" height="20" :alt="trans('table_status.loading_data')" :src="$root.sequel.asset.loader"/>
             <p>{{trans('table_status.loading_data')}}</p>
         </div>
 
@@ -13,7 +13,7 @@
                 </code>
             </pre>
             <h4>
-                {{trans('table_status.prequel_suggestions')}}
+                {{trans('table_status.sequel_suggestions')}}
             </h4>
             <code v-for="error in errorResolver(tableErrorDetailed)">- {{error}}</code>
         </div>
@@ -48,7 +48,7 @@ export default {
             // If no suggestions were found.
             if (errorCollection.length === 0) {
                 errorCollection.push(
-                    "Prequel could not suggest any fixes.",
+                    "Sequel could not suggest any fixes.",
                 );
             }
 

@@ -1,92 +1,76 @@
 <?php
 
-namespace Protoqol\Prequel\App;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\App;
+
+use Akrista\Sequel\Connection\DatabaseConnector;
 use Illuminate\Database\Connection;
-use Protoqol\Prequel\Connection\DatabaseConnector;
-use Protoqol\Prequel\Database\DatabaseTraverser;
 
 /**
  * Class AppStatus
- *
- * @package Protoqol\Prequel\App
  */
-class AppStatus
+final class AppStatus
 {
     /**
-     * Holds Prequel's database connection.
+     * Holds Sequel's database connection.
      *
      * @var Connection
      */
     private $connection;
 
     /**
-     * Holds database traverser instance.
-     *
-     * @var DatabaseTraverser $traverser
-     */
-    private $traverser;
-
-    /**
      * AppStatus constructor.
      */
     public function __construct()
     {
-        $this->traverser = new DatabaseTraverser();
         $this->connection = (new DatabaseConnector())->getConnection();
     }
 
-    /**
-     * @return array
-     */
     public function getStatus(): array
     {
         return [
-            "migrations"  => (new MigrationAction("", ""))->pending(),
-            "serverInfo"  => $this->serverInfo(),
-            "permissions" => $this->userPermissions(),
+            'migrations' => (new MigrationAction('', ''))->pending(),
+            'serverInfo' => $this->serverInfo(),
+            'permissions' => $this->userPermissions(),
         ];
     }
 
     /**
-     * Get server info.
-     *
-     * @return array
-     */
-    private function serverInfo(): array
-    {
-        return $this->connection->getServerInfo();
-    }
-
-    /**
      * Check database permissions for current user.
-     *
-     * @return array
      */
     public function userPermissions(): array
     {
         $grants = $this->connection->getGrants();
-        $privs = (string)array_values($grants)[0];
+        $privs = (string) array_values($grants)[0];
         $permissions = [];
 
         // If anyone seeing this has a better way of checking this, be my guest!
-        $permissions["SELECT"] = false !== strpos($privs, "SELECT");
-        $permissions["INSERT"] = false !== strpos($privs, "INSERT");
-        $permissions["UPDATE"] = false !== strpos($privs, "UPDATE");
-        $permissions["DELETE"] = false !== strpos($privs, "DELETE");
-        $permissions["FILE"] = false !== strpos($privs, "FILE");
-        $permissions["CREATE"] = false !== strpos($privs, "CREATE");
-        $permissions["DROP"] = false !== strpos($privs, "DROP");
-        $permissions["ALTER"] = false !== strpos($privs, "ALTER");
-        $permissions["HAS_ALL"] = true;
+        $permissions['SELECT'] = str_contains($privs, 'SELECT');
+        $permissions['INSERT'] = str_contains($privs, 'INSERT');
+        $permissions['UPDATE'] = str_contains($privs, 'UPDATE');
+        $permissions['DELETE'] = str_contains($privs, 'DELETE');
+        $permissions['FILE'] = str_contains($privs, 'FILE');
+        $permissions['CREATE'] = str_contains($privs, 'CREATE');
+        $permissions['DROP'] = str_contains($privs, 'DROP');
+        $permissions['ALTER'] = str_contains($privs, 'ALTER');
+        $permissions['HAS_ALL'] = true;
 
         // Check if user has all needed permissions
-        foreach ($permissions as $key => $val) {
+        foreach ($permissions as $val) {
             if ($val === false) {
-                $permissions["HAS_ALL"] = false;
+                $permissions['HAS_ALL'] = false;
             }
         }
 
         return $permissions;
+    }
+
+    /**
+     * Get server info.
+     */
+    private function serverInfo(): array
+    {
+        return $this->connection->getServerInfo();
     }
 }

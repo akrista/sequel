@@ -1,85 +1,73 @@
 <?php
 
-namespace Protoqol\Prequel\Http\Controllers;
+declare(strict_types=1);
 
-use Illuminate\Database\Connection;
+namespace Akrista\Sequel\Http\Controllers;
+
+use Akrista\Sequel\App\AppStatus;
+use Akrista\Sequel\App\MigrationAction;
+use Akrista\Sequel\Database\DatabaseTraverser;
+use Akrista\Sequel\Facades\PDB;
+use Akrista\Sequel\Http\Requests\SequelDatabaseRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Route;
-use Protoqol\Prequel\App\AppStatus;
-use Protoqol\Prequel\App\MigrationAction;
-use Protoqol\Prequel\Connection\DatabaseConnector;
-use Protoqol\Prequel\Database\DatabaseTraverser;
-use Protoqol\Prequel\Facades\PDB;
-use Protoqol\Prequel\Http\Requests\PrequelDatabaseRequest;
 
 /**
  * Class DatabaseActionController
- *
- * @package Protoqol\Prequel\Http\Controllers
  */
-class DatabaseController extends Controller
+final class DatabaseController extends Controller
 {
     /**
      * Qualified table name; 'database.table'
      *
-     * @var string $qualifiedName
+     * @var string
      */
     private $qualifiedName;
 
     /**
      * Table name
      *
-     * @var string $tableName
+     * @var string
      */
     private $tableName;
 
     /**
      * Database name
      *
-     * @var string $databaseName
+     * @var string
      */
     private $databaseName;
 
     /**
      * Holds model for given table if one exists.
      *
-     * @var Model $model
+     * @var Model
      */
     private $model;
 
     /**
-     * Holds connection using credentials from config.
-     *
-     * @var Connection $connection
-     */
-    private $connection;
-
-    /**
      * DatabaseActionController's constructor
      *
-     * @param Request|PrequelDatabaseRequest $request
+     * @param  Request|SequelDatabaseRequest  $request
      */
-    public function __construct($request)
+    public function __construct(Request|SequelDatabaseRequest $request)
     {
-        $this->tableName     = $request->table;
-        $this->databaseName  = $request->database;
+        $this->tableName = $request->table;
+        $this->databaseName = $request->database;
         $this->qualifiedName = $request->qualifiedName;
-        $this->model         = $request->model;
-        $this->connection    = (new DatabaseConnector())->getConnection();
+        $this->model = $request->model;
     }
 
     /**
      * Get table data, table structure and its qualified name
-     *
-     * @return mixed
      */
-    public function getTableData()
+    public function getTableData(): array
     {
         // If Model exists
-        if ($this->model && $this->databaseName === config("database.connections.mysql.database")) {
-            $paginated = $this->model->paginate(config("prequel.pagination"));
+        if ($this->model && $this->databaseName === config('database.connections.mysql.database')) {
+            $paginated = $this->model->paginate(config('sequel.pagination'));
             $paginated->setCollection(
                 $paginated
                     ->getCollection()
@@ -88,9 +76,9 @@ class DatabaseController extends Controller
             );
 
             return [
-                "table"     => $this->qualifiedName,
-                "data"      => $paginated,
-                "structure" => app(DatabaseTraverser::class)->getTableStructure(
+                'table' => $this->qualifiedName,
+                'data' => $paginated,
+                'structure' => app(DatabaseTraverser::class)->getTableStructure(
                     $this->databaseName,
                     $this->tableName
                 ),
@@ -98,16 +86,16 @@ class DatabaseController extends Controller
         }
 
         $data = PDB::create($this->databaseName, $this->tableName)
-                   ->builder()
-                   ->paginate(config("prequel.pagination"));
+            ->builder()
+            ->paginate(config('sequel.pagination'));
 
         return [
-            "table"     => $this->tableName,
-            "structure" => app(DatabaseTraverser::class)->getTableStructure(
+            'table' => $this->tableName,
+            'structure' => app(DatabaseTraverser::class)->getTableStructure(
                 $this->databaseName,
                 $this->tableName
             ),
-            "data"      => json_decode(json_encode($data->toArray(), JSON_INVALID_UTF8_IGNORE), true),
+            'data' => json_decode(json_encode($data->toArray(), JSON_INVALID_UTF8_IGNORE), true),
         ];
 
         //
@@ -116,14 +104,14 @@ class DatabaseController extends Controller
         //                \Illuminate\Support\Facades\DB::purge();
         //         }
         //
-        //        // Usage of the DB facade should be avoided since this uses the default config, and not the prequel config. @TODO refactor
+        //        // Usage of the DB facade should be avoided since this uses the default config, and not the  config. @TODO refactor
         //        return [
         //             "table"     => $this->qualifiedName,
         //             "structure" => app(DatabaseTraverser::class)->getTableStructure(
         //                 $this->databaseName,
         //                 $this->tableName
         //              ),
-        //             "data"      => DB::table($this->qualifiedName)->paginate(config('prequel.pagination')),
+        //             "data"      => DB::table($this->qualifiedName)->paginate(config('sequel.pagination')),
         //        ];
         //
     }
@@ -135,21 +123,19 @@ class DatabaseController extends Controller
      */
     public function findInTable()
     {
-        $column    = (string)Route::current()->parameter("column");
-        $queryType = (string)Route::current()->parameter("type");
-        $value     = (string)Route::current()->parameter("value");
-        $value     = $queryType === "LIKE" ? "%" . $value . "%" : $value;
+        $column = (string) Route::current()->parameter('column');
+        $queryType = (string) Route::current()->parameter('type');
+        $value = (string) Route::current()->parameter('value');
+        $value = $queryType === 'LIKE' ? '%' . $value . '%' : $value;
 
         return PDB::create($this->databaseName, $this->tableName)
-                  ->builder()
-                  ->where($column, $queryType, $value)
-                  ->paginate(config("prequel.pagination"));
+            ->builder()
+            ->where($column, $queryType, $value)
+            ->paginate(config('sequel.pagination'));
     }
 
     /**
      * Get database status.
-     *
-     * @return array
      */
     public function status(): array
     {
@@ -158,37 +144,31 @@ class DatabaseController extends Controller
 
     /**
      * Count number of records in the given table
-     *
-     * @return array
      */
     public function count(): array
     {
         return [
-            "count" => $this->model
+            'count' => $this->model
                 ? $this->model->count()
                 : PDB::create($this->databaseName, $this->tableName)
-                     ->builder()
-                     ->count(),
+                    ->builder()
+                    ->count(),
         ];
     }
 
     /**
      * Run pending migrations.
-     *
-     * @return int
      */
     public function runMigrations(): int
     {
-        return (new MigrationAction())->run();
+        return (new MigrationAction($this->databaseName, $this->tableName))->run();
     }
 
     /**
      * Reset latest migrations.
-     *
-     * @return int
      */
     public function resetMigrations(): int
     {
-        return (new MigrationAction())->reset();
+        return (new MigrationAction($this->databaseName, $this->tableName))->reset();
     }
 }

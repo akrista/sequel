@@ -1,17 +1,18 @@
 <?php
 
-namespace Protoqol\Prequel\Facades;
+declare(strict_types=1);
+
+namespace Akrista\Sequel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
  * Class PDB
  *
- * @package Protoqol\Prequel\Facades
  * @method static create(string $database, string $table)
  * @method statement
  */
-class PDB extends Facade
+final class PDB extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -20,6 +21,6 @@ class PDB extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return "prequeldb";
+        return 'sequeldb';
     }
 }

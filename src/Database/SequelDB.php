@@ -1,39 +1,39 @@
 <?php
 
-namespace Protoqol\Prequel\Database;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\Database;
+
+use Akrista\Sequel\Connection\DatabaseConnector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use PDO;
-use Protoqol\Prequel\Connection\DatabaseConnector;
 
 /**
- * Class PrequelDB
- *
- * @package Protoqol\Prequel\Database
+ * Class SequelDB
  */
-class PrequelDB extends Model
+final class SequelDB extends Model
 {
-    /**
-     * @var Builder
-     */
-    protected $builder, $dbConnection;
+    protected Builder $builder;
 
     /**
-     * @param string $database Database name
-     * @param string $table Table name
-     *
-     * @return PrequelDB
+     * @var mixed
      */
-    public function create(string $database, string $table)
+    private $dbConnection;
+
+    /**
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
+     */
+    public function create(string $database, string $table): static
     {
         $this->dbConnection = (new DatabaseConnector())->getConnection(
             $database
         );
         $tableName = $this->dbConnection->formatTableName($database, $table);
         $this->builder = new Builder(
-            $this->dbConnection,
+            $this->dbConnection->getConnection(),
             $this->dbConnection->getGrammar(),
             $this->dbConnection->getProcessor()
         );
@@ -43,20 +43,12 @@ class PrequelDB extends Model
         return $this;
     }
 
-    /**
-     * @return Builder
-     */
-    public function builder()
+    public function builder(): Builder
     {
         return $this->builder;
     }
 
-    /**
-     * @param array $queries
-     *
-     * @return array
-     */
-    public function statement(array $queries)
+    public function statement(array $queries): array
     {
         $queryResponse = [];
 
@@ -64,14 +56,15 @@ class PrequelDB extends Model
             if (empty($query)) {
                 continue;
             }
-            if (Str::startsWith(strtolower($query), "select")) {
+
+            if (Str::startsWith(mb_strtolower((string) $query), 'select')) {
                 $queryResponse[] = $this->dbConnection
                     ->getPdo()
                     ->query($query)
                     ->fetchAll(PDO::FETCH_ASSOC);
             } elseif (
-                Str::startsWith(strtolower($query), "update") ||
-                Str::startsWith(strtolower($query), "delete")
+                Str::startsWith(mb_strtolower((string) $query), 'update') ||
+                Str::startsWith(mb_strtolower((string) $query), 'delete')
             ) {
                 $queryResponse[] = $this->dbConnection
                     ->getPdo()

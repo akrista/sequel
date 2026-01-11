@@ -1,13 +1,13 @@
-![Prequel](assets/prequel_v1.png)
+![Sequel](assets/_v1.png)
 
 <p align="center">
-    <a href="https://packagist.org/packages/protoqol/prequel">	
-       <img alt="Packagist Version" src="https://img.shields.io/packagist/v/protoqol/prequel.svg">
+    <a href="https://packagist.org/packages/protoqol/">	
+       <img alt="Packagist Version" src="https://img.shields.io/packagist/v/protoqol/.svg">
     </a>
-    <a href="https://travis-ci.org/Protoqol/Prequel.svg?branch=Dev">
-	    <img src="https://travis-ci.org/Protoqol/Prequel.svg?branch=master"/>	
+    <a href="https://travis-ci.org/Protoqol/Sequel.svg?branch=Dev">
+	    <img src="https://travis-ci.org/Protoqol/Sequel.svg?branch=master"/>	
     </a>
-    <a href="https://packagist.org/packages/protoqol/prequel">
+    <a href="https://packagist.org/packages/protoqol/">
 	    <img src="https://img.shields.io/badge/php-%5E7.1-lightblue.svg"/>	
     </a>
     <a href="https://laravel.com/">
@@ -26,11 +26,11 @@
     </a>
 </p>
 
-#### What is Prequel exactly?
+#### What is Sequel exactly?
 
-Prequel is meant to be a database management tool for Laravel to replace the need for separate standalone database tools like phpMyAdmin, Sequel Pro or MySQL Workbench. With its (hopefully) clear and concise UI, Prequel is to be a modern and lightweight database browser/tool ready for the web of the future. Prequel's design is purposefully based on that of [Laravel Telescope](https://github.com/laravel/telescope) because (web-)developers today have enough to learn and master already, so let's help eachother out and make sure to not add anything virtually useless to that huge pile of knowledge.
+Sequel is meant to be a database management tool for Laravel to replace the need for separate standalone database tools like phpMyAdmin, Sequel Pro or MySQL Workbench. With its (hopefully) clear and concise UI, Sequel is to be a modern and lightweight database browser/tool ready for the web of the future. Sequel's design is purposefully based on that of [Laravel Telescope](https://github.com/laravel/telescope) because (web-)developers today have enough to learn and master already, so let's help eachother out and make sure to not add anything virtually useless to that huge pile of knowledge.
 
-![Prequel Screenshot](./assets/prequel_screenshot_table.png)
+![Sequel Screenshot](./assets/_screenshot_table.png)
 
 > Clear and concise database management
 
@@ -46,26 +46,26 @@ Both are highly appreciated and contribute directly to keeping open-source free 
 ###### To install follow the instructions below.
 
 ```bash
-$ composer require protoqol/prequel
-$ php artisan prequel:install
+$ composer require protoqol/
+$ php artisan :install
 ```
 
-###### When installation and publishing is done navigate to `/prequel` in your browser to see Prequel in action!
+###### When installation and publishing is done navigate to `/` in your browser to see Sequel in action!
 
 ## Updating
 
 ```bash
-$ php artisan prequel:update
+$ php artisan :update
 ```
 
-#### Issues, bugs and feature requests can be reported [here!](https://github.com/Protoqol/Prequel/issues/new/choose)
+#### Issues, bugs and feature requests can be reported [here!](https://github.com/Protoqol/Sequel/issues/new/choose)
 
 ## Configuration
 
-You might have noticed that, while publishing a config file appeared under `config/prequel.php`.
+You might have noticed that, while publishing a config file appeared under `config/.php`.
 That configuration file looks something like this.
 
-> Note that you can define `PREQUEL_ENABLED` in your .env file.
+> Note that you can define `SEQUEL_ENABLED` in your .env file.
 
 ```php
 <?php
@@ -74,24 +74,24 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel Master Switch : boolean
+        | Sequel Master Switch : boolean
         |--------------------------------------------------------------------------
         |
-        | Manually disable/enable Prequel, if in production Prequel will always be
+        | Manually disable/enable Sequel, if in production Sequel will always be
         | disabled. Reason being that nobody should ever be able to directly look
         | inside your database besides you or your dev team (obviously).
         |
         */
 
-        'enabled' => env('PREQUEL_ENABLED', true),
+        'enabled' => env('SEQUEL_ENABLED', true),
 
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel Locale : string
+        | Sequel Locale : string
         |--------------------------------------------------------------------------
         |
-        | Choose what language Prequel should display in.
+        | Choose what language Sequel should display in.
         |
         */
 
@@ -100,20 +100,20 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel Path
+        | Sequel Path
         |--------------------------------------------------------------------------
         |
-        | The path where Prequel will be residing. Note that this does not affect
-        | Prequel API routes.
+        | The path where Sequel will be residing. Note that this does not affect
+        | Sequel API routes.
         |
         */
 
-        'path' => 'prequel',
+        'path' => '',
 
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel base url
+        | Sequel base url
         |--------------------------------------------------------------------------
         |
         | When present, this URL will be used instead of the default url.
@@ -160,10 +160,10 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel Database Configuration : array
+        | Sequel Database Configuration : array
         |--------------------------------------------------------------------------
         |
-        | This enables you to fully configure your database connection for Prequel.
+        | This enables you to fully configure your database connection for Sequel.
         |
         */
 
@@ -180,7 +180,7 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel ignored databases and tables : array
+        | Sequel ignored databases and tables : array
         |--------------------------------------------------------------------------
         | Databases and tables that will be ignored during database discovery.
         |
@@ -200,10 +200,10 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel pagination per page : integer
+        | Sequel pagination per page : integer
         |--------------------------------------------------------------------------
         |
-        | When Prequel retrieves paginated information, this is the number of
+        | When Sequel retrieves paginated information, this is the number of
         | records that will be in each page.
         |
         */
@@ -213,35 +213,35 @@ That configuration file looks something like this.
 
         /*
         |--------------------------------------------------------------------------
-        | Prequel middleware : array
+        | Sequel middleware : array
         |--------------------------------------------------------------------------
         |
-        | Define custom middleware for Prequel to use.
+        | Define custom middleware for Sequel to use.
         |
-        | Ex. 'web', Protoqol\Prequel\Http\Middleware\Authorised::class
+        | Ex. 'web', Protoqol\Sequel\Http\Middleware\Authorised::class
         |
         */
 
         'middleware' => [
-            Protoqol\Prequel\Http\Middleware\Authorised::class,
+            Protoqol\Sequel\Http\Middleware\Authorised::class,
         ],
     ];
 
 ```
 
-![Prequel Screenshot](./assets/prequel_screenshot.png)
+![Sequel Screenshot](./assets/_screenshot.png)
 
 > Clear and concise database management
 
 ## Contributing
 
-See [Contributing](CONTRIBUTING.md) to see how you can contribute to Prequel!
+See [Contributing](CONTRIBUTING.md) to see how you can contribute to Sequel!
 
 ## Contributors
 
 - [Quinten Justus](https://github.com/QuintenJustus)
-- [Contributors](https://github.com/Protoqol/Prequel/graphs/contributors)
+- [Contributors](https://github.com/Protoqol/Sequel/graphs/contributors)
 
 ## License
 
-Prequel is licensed under the MIT License. Please see [License File](LICENSE) for more information.
+Sequel is licensed under the MIT License. Please see [License File](LICENSE) for more information.

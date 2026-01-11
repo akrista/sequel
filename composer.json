@@ -1,5 +1,5 @@
 {
-    "name": "protoqol/prequel",
+    "name": "akrista/sequel",
     "description": "Clear and concise database management.",
     "type": "library",
     "license": "MIT",
@@ -11,30 +11,32 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.2.5|^8.0",
-        "laravel/framework": "^6.0|^7.0|^8.0|^9.0|^10",
+        "php": "^8.1|^8.5",
+        "laravel/framework": "^11.0|^12.0",
         "ext-pdo": "*",
         "ext-json": "*"
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Protoqol\\Prequel\\PrequelServiceProvider"
+                "Akrista\\Sequel\\SequelServiceProvider"
             ]
         }
     },
     "require-dev": {
-        "orchestra/testbench": "^3.7",
-        "phpmd/phpmd": "^2.6"
+        "orchestra/testbench": "^8.0|^9.0",
+        "phpmd/phpmd": "^2.6",
+        "rector/rector": "^2.3",
+        "laravel/pint": "^1.27"
     },
     "autoload": {
         "psr-4": {
-            "Protoqol\\Prequel\\": "src"
+            "Akrista\\Sequel\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Protoqol\\Prequel\\Tests\\": "tests/"
+            "Akrista\\Sequel\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -46,6 +48,10 @@
         ],
         "test": [
             "phpunit"
+        ],
+        "format": ["pint --ansi"],
+        "lint": [
+            "rector"
         ]
     },
     "scripts-descriptions": {

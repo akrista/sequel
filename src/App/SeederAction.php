@@ -1,86 +1,50 @@
 <?php
 
-namespace Protoqol\Prequel\App;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\App;
+
+use Akrista\Sequel\Interfaces\GenerationInterface;
+use Akrista\Sequel\Traits\classResolver;
 use Exception;
 use Illuminate\Support\Facades\Artisan;
-use Protoqol\Prequel\Interfaces\GenerationInterface;
-use Protoqol\Prequel\Traits\classResolver;
 
-class SeederAction implements GenerationInterface
+final class SeederAction implements GenerationInterface
 {
     use classResolver;
 
     /**
-     * @var string $database
-     */
-    private $database;
-
-    /**
-     * @var string $table
-     */
-    private $table;
-
-    /**
      * ControllerAction constructor.
-     *
-     * @param string $database
-     * @param string $table
      */
-    public function __construct(string $database, string $table)
-    {
-        $this->database = $database;
-        $this->table = $table;
-    }
+    public function __construct(private string $database, private string $table) {}
 
     /**
      * Generate seeder.
-     *
-     * @return int|string
      */
-    public function generate()
+    public function generate(): string
     {
-        Artisan::call("make:seeder", [
-            "name" => $this->generateClassName($this->table) . "Seeder",
+        Artisan::call('make:seeder', [
+            'name' => $this->generateClassName($this->table) . 'Seeder',
         ]);
 
         $this->dumpAutoload();
 
-        return (string)$this->getQualifiedName();
+        return (string) $this->getQualifiedName();
     }
 
     /**
      * Run seeder.
      *
      * @return int
+     *
      * @throws Exception
      */
     public function run()
     {
-        return Artisan::call("db:seed", [
-            "--class"    => $this->checkAndGetSeederName(),
-            "--database" => $this->database,
+        return Artisan::call('db:seed', [
+            '--class' => $this->checkAndGetSeederName(),
+            '--database' => $this->database,
         ]);
-    }
-
-    /**
-     * Resolve and check seeder for table.
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function checkAndGetSeederName()
-    {
-        $seederClass = $this->generateSeederName($this->table);
-
-        if (!$this->classExists($seederClass)) {
-            throw new Exception(
-                $seederClass .
-                " could not be found or your seeder does not follow naming convention"
-            );
-        }
-
-        return $seederClass;
     }
 
     /**
@@ -92,17 +56,15 @@ class SeederAction implements GenerationInterface
     {
         try {
             return $this->checkAndGetSeederName();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
 
     /**
      * Get class name
-     *
-     * @return mixed
      */
-    public function getClassname()
+    public function getClassname(): false|string
     {
         $class = $this->getQualifiedName();
 
@@ -110,7 +72,7 @@ class SeederAction implements GenerationInterface
             return false;
         }
 
-        $arr = explode("\\", $class);
+        $arr = explode('\\', $class);
         $count = count($arr);
 
         return $arr[$count - 1];
@@ -118,10 +80,8 @@ class SeederAction implements GenerationInterface
 
     /**
      * Get class namespace
-     *
-     * @return mixed
      */
-    public function getNamespace()
+    public function getNamespace(): false|string
     {
         $class = $this->getQualifiedName();
 
@@ -129,17 +89,38 @@ class SeederAction implements GenerationInterface
             return false;
         }
 
-        $arr = explode("\\", $class);
+        $arr = explode('\\', $class);
         $count = count($arr);
-        $namespace = "";
+        $namespace = '';
 
         for ($i = 0; $i < $count; $i++) {
             if ($i === $count - 1) {
                 break;
             }
-            $namespace .= (string)$arr[$i] . "\\";
+
+            $namespace .= $arr[$i] . '\\';
         }
 
         return $namespace;
+    }
+
+    /**
+     * Resolve and check seeder for table.
+     *
+     *
+     * @throws Exception
+     */
+    private function checkAndGetSeederName(): string
+    {
+        $seederClass = $this->generateSeederName($this->table);
+
+        if (!$this->classExists($seederClass)) {
+            throw new Exception(
+                $seederClass .
+                ' could not be found or your seeder does not follow naming convention'
+            );
+        }
+
+        return $seederClass;
     }
 }

@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a feature for Prequel
+about: Suggest a feature for Sequel
 title: "[FEATURE REQUEST]"
 labels: enhancement
 assignees: ""

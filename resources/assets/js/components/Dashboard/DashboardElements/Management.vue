@@ -36,7 +36,7 @@
                 </StatusDisplay>
             </div>
             <div class="status-cards">
-                <!--            <StatusDisplay :header="`Permissions for user '${$root.prequel.env.user}'`"-->
+                <!--            <StatusDisplay :header="`Permissions for user '${$root.sequel.env.user}'`"-->
                 <!--                           :value="readableArray(app.permissions)"/>-->
 
                 <StatusDisplay v-if="app.serverInfo.UPTIME"
@@ -77,7 +77,7 @@
     </div>
     <div v-else id="error">
         <h2>Oops! Could not retrieve any server info</h2>
-        <p>No worries though, Prequel itself will probably work fine</p>
+        <p>No worries though, Sequel itself will probably work fine</p>
         <img alt="" width="200"
              src="https://media0.giphy.com/media/2A75RyXVzzSI2bx4Gj/giphy.gif?cid=790b7611fc2ac78e65ba7de785530e810a8dcbee0b4065c8&rid=giphy.gif"/>
     </div>

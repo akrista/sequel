@@ -27,7 +27,7 @@
                     <font-awesome-icon style="transform: rotate(90deg);" icon="search-plus" />&nbsp;
                 </td>
                 <td class="ellipsis table-td"
-                    :id="item ? item : ENUM.PREQUEL_UNDEFINED"
+                    :id="item ? item : ENUM.SEQUEL_UNDEFINED"
                     :class="!item ? 'text-gray-500 italic' : 'text-gray-700'"
                     :title="(item ? item + ` (${trans('general.length')} ${(item + '').length})` : '' + '\nLeft click to see\nRight click to edit')"
                     :contenteditable="false"
@@ -76,7 +76,7 @@ export default {
              * Enumerator
              */
             ENUM: {
-                PREQUEL_UNDEFINED: 'PREQUEL_UNDEFINED',
+                SEQUEL_UNDEFINED: 'SEQUEL_UNDEFINED',
             },
         };
     },

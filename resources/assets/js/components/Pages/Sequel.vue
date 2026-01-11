@@ -1,4 +1,4 @@
-<!-- NOTE This is the root Prequel Vue instance -->
+<!-- NOTE This is the root Sequel Vue instance -->
 
 <template>
     <!--
@@ -13,11 +13,11 @@
         <SwitchMode :modus="view.modus.mode" @switchMode="switchMode($event)"/>
         <Version/>
 
-        <Header :error="prequel.errorDetailed"
+        <Header :error="sequel.errorDetailed"
                 :activeTable="table.currentActiveName"
                 :showFilter="view.modus.mode !== view.modus.enum.MANAGE"
                 :tableStructure="table.structure"
-                :env="prequel.env"
+                :env="sequel.env"
                 :loading="table.loading"
                 :tableLoading="table.tableLoading"
                 :searchColumn="table.search.column"
@@ -30,21 +30,21 @@
                 @refresh="getTableData(`${table.database}.${table.table}`, false, true)"/>
 
         <Paginator
-                v-if="table.currentActiveName.length !== 0 && !prequel.error && view.modus.mode === view.modus.enum.BROWSE"
+                v-if="table.currentActiveName.length !== 0 && !sequel.error && view.modus.mode === view.modus.enum.BROWSE"
                 :currentPage="table.pagination.currentPage"
                 :numberOfPages="table.pagination.numberOfPages"
                 @pageChange="changePage($event)"/>
 
         <div v-else class="block w-1 h-1 my-2"></div>
 
-        <div v-if="!prequel.error" class="main-content">
+        <div v-if="!sequel.error" class="main-content">
             <div class="wrapper">
                 <transition name="slide-fade" mode="in-out">
                     <SideBar v-if="!view.collapsed"
                              :class="view.collapsed ? 'hidden' : 'w-1/5'"
                              :readability="view.readability"
-                             :table-data="prequel.data"
-                             :table-flat="prequel.flat"
+                             :table-data="sequel.data"
+                             :table-flat="sequel.flat"
                              @searchingForTable="searchForTable($event)"
                              @tableSelect="getTableData($event)"/>
                 </transition>
@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <PrequelError v-if="prequel.error" :error-detailed="prequel.errorDetailed" :env="prequel.env"/>
+        <SequelError v-if="sequel.error" :error-detailed="sequel.errorDetailed" :env="sequel.env"/>
     </div>
 </template>
 
@@ -72,18 +72,18 @@ import axios        from "axios";
 import Header       from "../Header/Header";
 import SideBar      from "../SideBar/SideBarWrapper";
 import MainContent  from "../MainContent/ContentWrapper";
-import PrequelError from "./PrequelError";
+import SequelError from "./SequelError";
 import Paginator    from "../MainContent/BrowseMode/Table/Paginator";
 import SwitchMode   from "../Elements/SwitchMode";
 import Version      from "../Elements/Version";
 
 export default {
-    name      : "Prequel",
+    name      : "Sequel",
     components: {
         Version,
         SwitchMode,
         Paginator,
-        PrequelError,
+        SequelError,
         MainContent,
         SideBar,
         Header,
@@ -97,20 +97,20 @@ export default {
          | Holds data that comes directly from the back-end.
          |---------------------------------------------
          */
-            prequel: {
-                error        : window.Prequel.error.error, // Object
-                errorDetailed: window.Prequel.error,       // String
-                data         : window.Prequel.data,        // Object
-                env          : window.Prequel.env,         // Object
-                flat         : window.Prequel.flat,        // Array
-                lang         : window.Prequel.i18n,        // Object
+            sequel: {
+                error        : window.Sequel.error.error, // Object
+                errorDetailed: window.Sequel.error,       // String
+                data         : window.Sequel.data,        // Object
+                env          : window.Sequel.env,         // Object
+                flat         : window.Sequel.flat,        // Array
+                lang         : window.Sequel.i18n,        // Object
                 api          : {
                     database: "",
                 },
                 asset        : {
-                    logo   : "/vendor/prequel/favicon.png",
-                    prequel: "/vendor/prequel/prequel_v1.png",
-                    loader : "/vendor/prequel/loader.gif",
+                    logo   : "/vendor/sequel/favicon.png",
+                    sequel: "/vendor/sequel/sequel_v1.png",
+                    loader : "/vendor/sequel/loader.gif",
                 },
             },
 
@@ -169,7 +169,7 @@ export default {
     },
 
     mounted () {
-        if (!this.prequel.error) {
+        if (!this.sequel.error) {
             this.checkUrlParameters();
         }
 

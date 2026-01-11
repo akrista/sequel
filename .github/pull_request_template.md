@@ -4,7 +4,7 @@
 
 #### Issue or feature explanation
 
-A short explanation as to why this is needed, or, would be a great addition to Prequel! Or a reference to an open issue.
+A short explanation as to why this is needed, or, would be a great addition to Sequel! Or a reference to an open issue.
 
 #### Proposed solution/change
 

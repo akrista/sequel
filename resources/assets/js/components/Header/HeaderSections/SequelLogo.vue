@@ -2,13 +2,13 @@
     <div>
         <div class="header-left-logo">
             <div class="header-left-logo-image">
-                <a href="/prequel" :title="trans('general.home')">
-                    <img width="35rem" height="35rem" alt="Protoqol Prequel" :src="$root.prequel.asset.logo">
+                <a href="/sequel" :title="trans('general.home')">
+                    <img width="35rem" height="35rem" alt="Protoqol Sequel" :src="$root.sequel.asset.logo">
                 </a>
             </div>
             <h1 class="header-left-logo-text text-logo">
-                <span>Prequel</span>
-                <a href="https://github.com/Protoqol" target="_blank" title="Creator of Prequel">PROTOQOL</a>
+                <span>Sequel</span>
+                <a href="https://github.com/Protoqol" target="_blank" title="Creator of Sequel">PROTOQOL</a>
             </h1>
         </div>
         <div class="header-left-connection">
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-    name : "PrequelLogo",
+    name : "SequelLogo",
     props: ["env"],
 
     methods: {

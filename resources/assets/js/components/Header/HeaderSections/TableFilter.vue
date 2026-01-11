@@ -5,7 +5,7 @@
                         <font-awesome-icon class="fa" icon="table"/>
                         {{ activeTable }} <small>({{ numberOfRecords }} {{trans('header.records')}})</small>
                     </span>
-            <img v-else width="20" height="20" :src="$root.prequel.asset.loader" alt="Loading table data...">
+            <img v-else width="20" height="20" :src="$root.sequel.asset.loader" alt="Loading table data...">
         </h1>
 
         <label v-if="activeTable && showFilter">

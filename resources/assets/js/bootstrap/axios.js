@@ -4,8 +4,8 @@ window.axios = require('axios/index');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head.querySelector('meta[name="csrf-token"]').content;
 
-if (window.Prequel.env.hasOwnProperty('baseUrl')) {
-    window.axios.defaults.baseURL = `${window.Prequel.env.baseUrl ? window.Prequel.env.baseUrl : window.location.origin}/prequel-api`;
+if (window.Sequel.env.hasOwnProperty('baseUrl')) {
+    window.axios.defaults.baseURL = `${window.Sequel.env.baseUrl ? window.Sequel.env.baseUrl : window.location.origin}/sequel-api`;
 }
 
 // Abstracted method to poll API.

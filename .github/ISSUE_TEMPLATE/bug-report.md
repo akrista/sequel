@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug to improve the quality of Prequel.
+about: Report a bug to improve the quality of Sequel.
 title: "[BUG]"
 labels: bug
 assignees: ""

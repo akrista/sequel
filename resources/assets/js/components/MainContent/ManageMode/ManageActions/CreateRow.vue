@@ -104,7 +104,7 @@ export default {
 
                     form.target.reset();
 
-                    PrequelSuccessToast.fire({
+                    SequelSuccessToast.fire({
                         text: `Inserted row into ${this.table}`,
                     }).finally(() => {
                         this.$refs.actions.conslog(`SUCCESS: Inserted row into ${this.table}`);
@@ -114,7 +114,7 @@ export default {
                 }).
                 catch(err => {
                     this.$refs.actions.conslog(err.response.data.message, "error");
-                    PrequelErrorToast.fire({
+                    SequelErrorToast.fire({
                         text: err.response.data.exception,
                     });
                 });

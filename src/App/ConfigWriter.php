@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Configuration writer
  * Author: https://github.com/daftspunk
@@ -17,34 +19,27 @@
  * Pro Regex tip: Use [\s\S] instead of . for multiline support
  */
 
-namespace Protoqol\Prequel\App;
+namespace Akrista\Sequel\App;
 
 use Exception;
 
-class ConfigWriter
+final class ConfigWriter
 {
     /**
      * Write to config file
-     *
-     * @param string $filePath
-     * @param array $newValues
-     * @param bool $useValidation
-     *
-     * @return string
      */
     public function toFile(
         string $filePath,
         array $newValues,
         bool $useValidation = true
-    ): string
-    {
+    ): string {
         $contents = file_get_contents($filePath);
 
         try {
             $contents = $this->toContent($contents, $newValues, $useValidation);
             file_put_contents($filePath, $contents);
-        } catch (Exception $e) {
-            return $e;
+        } catch (Exception $exception) {
+            return $exception;
         }
 
         return $contents;
@@ -54,18 +49,17 @@ class ConfigWriter
         string $contents,
         array $newValues,
         bool $useValidation = true
-    ): string
-    {
+    ): string {
         $contents = $this->parseContent($contents, $newValues);
 
         if (!$useValidation) {
             return $contents;
         }
 
-        $result = eval("?>" . $contents);
+        $result = eval('?>' . $contents);
 
         foreach ($newValues as $key => $expectedValue) {
-            $parts = explode(".", $key);
+            $parts = explode('.', (string) $key);
 
             $array = $result;
             foreach ($parts as $part) {
@@ -80,9 +74,10 @@ class ConfigWriter
 
                 $array = $array[$part];
             }
+
             $actualValue = $array;
 
-            if ($actualValue != $expectedValue) {
+            if ($actualValue !== $expectedValue) {
                 throw new Exception(
                     sprintf(
                         'Unable to rewrite key "%s" in config, rewrite failed',
@@ -95,7 +90,7 @@ class ConfigWriter
         return $contents;
     }
 
-    protected function parseContent(string $contents, array $newValues): string
+    private function parseContent(string $contents, array $newValues): string
     {
         $result = $contents;
 
@@ -106,14 +101,13 @@ class ConfigWriter
         return $result;
     }
 
-    protected function parseContentValue(
+    private function parseContentValue(
         string $contents,
         string $path,
         $value
-    ): string
-    {
+    ): string {
         $result = $contents;
-        $items = explode(".", $path);
+        $items = explode('.', $path);
         $key = array_pop($items);
         $replaceValue = $this->writeValueToPhp($value);
 
@@ -128,7 +122,7 @@ class ConfigWriter
             $result = preg_replace(
                 $pattern,
                 '${1}${2}' . $replaceValue,
-                $result,
+                (string) $result,
                 1,
                 $count
             );
@@ -141,16 +135,16 @@ class ConfigWriter
         return $result;
     }
 
-    protected function writeValueToPhp($value): string
+    private function writeValueToPhp($value): string
     {
-        if (is_string($value) && strpos($value, "'") === false) {
+        if (is_string($value) && !str_contains($value, "'")) {
             $replaceValue = "'" . $value . "'";
-        } elseif (is_string($value) && strpos($value, '"') === false) {
+        } elseif (is_string($value) && !str_contains($value, '"')) {
             $replaceValue = '"' . $value . '"';
         } elseif (is_bool($value)) {
-            $replaceValue = $value ? "true" : "false";
+            $replaceValue = $value ? 'true' : 'false';
         } elseif (is_null($value)) {
-            $replaceValue = "null";
+            $replaceValue = 'null';
         } elseif (
             is_array($value) &&
             count($value) === count($value, COUNT_RECURSIVE)
@@ -160,12 +154,10 @@ class ConfigWriter
             $replaceValue = $value;
         }
 
-        $replaceValue = str_replace('$', '\$', $replaceValue);
-
-        return $replaceValue;
+        return str_replace('$', '\$', $replaceValue);
     }
 
-    protected function writeArrayToPhp(array $array): array
+    private function writeArrayToPhp(array $array): array
     {
         $result = [];
 
@@ -175,17 +167,14 @@ class ConfigWriter
             }
         }
 
-        return "[" . implode(", ", $result) . "]";
-
-        return $result;
+        return '[' . implode(', ', $result) . ']';
     }
 
-    protected function buildStringExpression(
+    private function buildStringExpression(
         string $targetKey,
         array $arrayItems = [],
         string $quoteChar = "'"
-    ): string
-    {
+    ): string {
         $expression = [];
 
         // Opening expression for array items ($1)
@@ -193,25 +182,24 @@ class ConfigWriter
 
         // The target key opening
         $expression[] =
-            '([\'|"]' . $targetKey . '[\'|"]\s*=>\s*)[' . $quoteChar . "]";
+            '([\'|"]' . $targetKey . '[\'|"]\s*=>\s*)[' . $quoteChar . ']';
 
         // The target value to be replaced ($2)
-        $expression[] = "([^" . $quoteChar . "]*)";
+        $expression[] = '([^' . $quoteChar . ']*)';
 
         // The target key closure
-        $expression[] = "[" . $quoteChar . "]";
+        $expression[] = '[' . $quoteChar . ']';
 
-        return "/" . implode("", $expression) . "/";
+        return '/' . implode('', $expression) . '/';
     }
 
     /**
      * Common constants only (true, false, null, integers)
      */
-    protected function buildConstantExpression(
+    private function buildConstantExpression(
         string $targetKey,
         array $arrayItems = []
-    ): string
-    {
+    ): string {
         $expression = [];
 
         // Opening expression for array items ($1)
@@ -224,17 +212,16 @@ class ConfigWriter
         $expression[] =
             "([tT][rR][uU][eE]|[fF][aA][lL][sS][eE]|[nN][uU][lL]{2}|[\d]+)";
 
-        return "/" . implode("", $expression) . "/";
+        return '/' . implode('', $expression) . '/';
     }
 
     /**
      * Single level arrays only
      */
-    protected function buildArrayExpression(
+    private function buildArrayExpression(
         string $targetKey,
         array $arrayItems = []
-    ): string
-    {
+    ): string {
         $expression = [];
 
         // Opening expression for array items ($1)
@@ -246,12 +233,12 @@ class ConfigWriter
         // The target value to be replaced ($3)
         $expression[] = "(?:[aA][rR]{2}[aA][yY]\(|[\[])([^\]|)]*)[\]|)]";
 
-        return "/" . implode("", $expression) . "/";
+        return '/' . implode('', $expression) . '/';
     }
 
-    protected function buildArrayOpeningExpression(array $arrayItems): string
+    private function buildArrayOpeningExpression(array $arrayItems): string
     {
-        if (count($arrayItems)) {
+        if ($arrayItems !== []) {
             $itemOpen = [];
             foreach ($arrayItems as $item) {
                 // The left hand array assignment
@@ -262,12 +249,10 @@ class ConfigWriter
             }
 
             // Capture all opening array (non greedy)
-            $result = "(" . implode("[\s\S]*?", $itemOpen) . "[\s\S]*?)";
-        } else {
-            // Gotta capture something for $1
-            $result = "()";
+            return '(' . implode("[\s\S]*?", $itemOpen) . "[\s\S]*?)";
         }
 
-        return $result;
+        // Gotta capture something for $1
+        return '()';
     }
 }

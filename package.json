@@ -10,30 +10,30 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "axios": "^0.21",
-    "cross-env": "^5.2.1",
+    "axios": "^1.13.2",
+    "cross-env": "^7.0.3",
     "laravel-mix": "^6.0.43",
     "laravel-mix-purgecss": "^6.0.0",
     "laravel-mix-tailwind": "^0.1.2",
     "lodash": "^4.17.21",
-    "postcss-import": "^12.0.1",
-    "prettier": "^2.2.1",
-    "resolve-url-loader": "^2.3.1",
-    "sass": "^1.49.9",
-    "sass-loader": "^12.6.0",
-    "tailwindcss": "^3.0.23",
-    "vue": "^2.6.12",
-    "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.6.12",
-    "webpack-cli": "^4.9.2"
+    "postcss-import": "^16.1.1",
+    "prettier": "^3.7.4",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.85.1",
+    "sass-loader": "^16.0.6",
+    "tailwindcss": "^4.1.18",
+    "vue": "^3.5.26",
+    "vue-loader": "^17.4.2",
+    "vue-template-compiler": "^0.1.0",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/vue-fontawesome": "^0.1.10",
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/vue-fontawesome": "^3.1.3",
     "axios-request-handler": "^1.0.4",
-    "sweetalert2": "^8.15.0",
-    "vuejs-paginate": "^2.1.0",
+    "sweetalert2": "^11.26.17",
+    "laravel-vue-pagination": "^4.1.3",
     "webpack": "^5.69.1"
   }
 }

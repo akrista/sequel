@@ -1,17 +1,19 @@
 <?php
 
-namespace Protoqol\Prequel\Connection;
+declare(strict_types=1);
 
+namespace Akrista\Sequel\Connection;
+
+use Akrista\Sequel\Database\SequelAdapter;
 use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Processors\MySqlProcessor;
 use PDO;
-use Protoqol\Prequel\Database\SequelAdapter;
 
-class MySqlConnection extends Connection
+final class MySqlConnection extends Connection
 {
-    protected $connection;
+    private readonly Connection $connection;
 
     /**
      * MySqlConnection constructor.
@@ -24,74 +26,64 @@ class MySqlConnection extends Connection
 
     /**
      * Get this.
-     *
-     * @return MySqlConnection
      */
-    public function getConnection(): MySqlConnection
+    public function getConnection(): self
     {
         return $this;
     }
 
     /**
      * Get PDO.
-     *
-     * @return PDO
      */
     public function getPdo(): PDO
     {
-        $connection = config("prequel.database.connection");
-        $host       = config("prequel.database.host");
-        $port       = config("prequel.database.port");
-        $database   = config("prequel.database.database");
-        $socket     = config("prequel.database.socket");
+        $connection = config('sequel.database.connection');
+        $host = config('sequel.database.host');
+        $port = config('sequel.database.port');
+        $database = config('sequel.database.database');
+        $socket = config('sequel.database.socket');
 
         $dsn = $connection;
 
         if ($socket) {
             $dsn .=
-                ":unix_socket=" . $socket;
+                ':unix_socket='.$socket;
         } else {
             $dsn .=
-                ":host=" .
-                $host .
-                ";port=" .
+                ':host='.
+                $host.
+                ';port='.
                 $port;
         }
 
-        $dsn .= ";dbname=" . $database;
+        $dsn .= ';dbname='.$database;
 
-        $user = config("prequel.database.username");
-        $pass = config("prequel.database.password");
+        $user = config('sequel.database.username');
+        $pass = config('sequel.database.password');
 
         return new PDO($dsn, $user, $pass);
     }
 
     /**
      * Return with user permissions
-     *
-     * @return array
      */
     public function getGrants(): array
     {
-        return (array)$this->connection->select(
-            "SHOW GRANTS FOR CURRENT_USER();"
+        return (array) $this->connection->select(
+            'SHOW GRANTS FOR CURRENT_USER();'
         )[0];
     }
 
     /**
      * Get grammar.
-     *
-     * @return MySqlGrammar
      */
     public function getGrammar(): MySqlGrammar
     {
-        return new MySqlGrammar();
+        return new MySqlGrammar($this);
     }
 
     /**
      * Get processor.
-     *
-     * @return MySqlProcessor
      */
     public function getProcessor(): MySqlProcessor
     {
@@ -100,20 +92,18 @@ class MySqlConnection extends Connection
 
     /**
      * Gets information about the server.
-     *
-     * @return array
      */
     public function getServerInfo(): array
     {
         $serverInfo = $this->getPdo()->getAttribute(PDO::ATTR_SERVER_INFO);
 
-        $explodedServerInfo = explode("  ", $serverInfo);
-        $serverInfoArray    = [];
+        $explodedServerInfo = explode('  ', (string) $serverInfo);
+        $serverInfoArray = [];
 
         foreach ($explodedServerInfo as $attr) {
-            $split                 = explode(": ", $attr);
-            $key                   = strtoupper(
-                str_replace(" ", "_", str_replace(":", "", $split[0]))
+            $split = explode(': ', $attr);
+            $key = mb_strtoupper(
+                str_replace(' ', '_', str_replace(':', '', $split[0]))
             );
             $serverInfoArray[$key] = $split[1];
         }
@@ -122,48 +112,39 @@ class MySqlConnection extends Connection
     }
 
     /**
-     * @param string $database Database name
-     * @param string $table    Table name
-     *
-     * @return string
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
      */
     public function formatTableName(string $database, string $table): string
     {
-        return $database . "." . $table;
+        return $database.'.'.$table;
     }
 
     /**
-     * @param string $database Database name
-     * @param string $table    Table name
-     *
-     * @return array
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
      */
     public function getTableStructure(string $database, string $table): array
     {
-        return $this->select("SHOW COLUMNS FROM `$database`.`$table`");
+        return $this->select(sprintf('SHOW COLUMNS FROM `%s`.`%s`', $database, $table));
     }
 
     /**
-     * @param string $database Database name
-     * @param string $table    Table name
-     *
-     * @return array
+     * @param  string  $database  Database name
+     * @param  string  $table  Table name
      */
     public function getTableData(string $database, string $table): array
     {
-        return $this->connection->select("SELECT * FROM `$database`.`$table`");
+        return $this->connection->select(sprintf('SELECT * FROM `%s`.`%s`', $database, $table));
     }
 
     /**
-     * @param string $database
-     *
-     * @return array
      * @throws Exception
      */
     public function getTablesFromDB(string $database): array
     {
         $databaseQueries = new SequelAdapter(
-            config("prequel.database.connection")
+            config('sequel.database.connection')
         );
 
         return $this->select($databaseQueries->showTablesFrom($database));
