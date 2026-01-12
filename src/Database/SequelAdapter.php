@@ -34,7 +34,7 @@ final class SequelAdapter
         return match ($this->databaseType) {
             'mysql' => 'SHOW TABLES;',
             'pgsql' => "SELECT table_name FROM information_schema.tables WHERE table_schema='" .
-                config('database.connections.pgsql.schema') .
+                (config('database.connections.pgsql.search_path') ?? 'public') .
                 "' ORDER BY table_name;",
             'sqlite' => 'SELECT name FROM sqlite_master WHERE type="table";',
             default => throw new Exception(
@@ -66,7 +66,7 @@ final class SequelAdapter
         return match ($this->databaseType) {
             'mysql' => 'SHOW TABLES FROM `' . $databaseName . '`;',
             'pgsql' => "SELECT table_name FROM information_schema.tables WHERE table_schema='" .
-                config('database.connections.pgsql.schema') .
+                (config('database.connections.pgsql.search_path') ?? 'public') .
                 "' ORDER BY table_name;",
             'sqlite' => 'SELECT name FROM sqlite_master WHERE type="table";',
             default => throw new Exception(

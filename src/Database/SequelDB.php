@@ -15,7 +15,7 @@ use PDO;
  */
 final class SequelDB extends Model
 {
-    protected Builder $builder;
+    protected Builder $queryBuilder;
 
     private \Akrista\Sequel\Connection\MySqlConnection|\Akrista\Sequel\Connection\PostgresConnection|\Akrista\Sequel\Connection\SQLiteConnection|null $dbConnection = null;
 
@@ -29,20 +29,20 @@ final class SequelDB extends Model
             $database
         );
         $tableName = $this->dbConnection->formatTableName($database, $table);
-        $this->builder = new Builder(
+        $this->queryBuilder = new Builder(
             $this->dbConnection->getConnection(),
             $this->dbConnection->getGrammar(),
             $this->dbConnection->getProcessor()
         );
 
-        $this->builder->from($tableName);
+        $this->queryBuilder->from($tableName);
 
         return $this;
     }
 
     public function builder(): Builder
     {
-        return $this->builder;
+        return $this->queryBuilder;
     }
 
     public function statement(array $queries): array

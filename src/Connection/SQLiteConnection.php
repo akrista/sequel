@@ -37,7 +37,8 @@ final class SQLiteConnection extends Connection
      */
     public function getPdo(): PDO
     {
-        $database = config('sequel.database.database');
+        $connectionName = config('sequel.database.connection', 'sqlite');
+        $database = config("database.connections.{$connectionName}.database");
 
         // Handle relative and absolute paths
         if ($database !== ':memory:' && !str_starts_with((string) $database, '/')) {
@@ -100,7 +101,19 @@ final class SQLiteConnection extends Connection
      */
     public function getTableStructure(string $database, string $table): array
     {
-        return $this->select(sprintf('PRAGMA table_info(%s)', $table));
+        $result = $this->select(sprintf('PRAGMA table_info(%s)', $table));
+        
+        // Normalize SQLite PRAGMA output to match MySQL SHOW COLUMNS format for frontend compatibility
+        return array_map(function ($column) {
+            return (object) [
+                'Field' => $column->name,
+                'Type' => $column->type,
+                'Null' => $column->notnull ? 'NO' : 'YES',
+                'Key' => $column->pk ? 'PRI' : '',
+                'Default' => $column->dflt_value,
+                'Extra' => $column->pk ? 'auto_increment' : '',
+            ];
+        }, $result);
     }
 
     /**
